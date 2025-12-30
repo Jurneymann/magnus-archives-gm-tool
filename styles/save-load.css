@@ -1,0 +1,285 @@
+/* Magnus Archives GM Tool - Save/Load Section */
+
+.save-load-section {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d1a0d 100%);
+  border: 2px solid #317e30;
+  border-radius: 8px;
+  margin: 20px 0;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(49, 126, 48, 0.3);
+}
+
+.save-load-header {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a2a1a 100%);
+  padding: 15px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #4caf50;
+  font-size: 1.1em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid #317e30;
+  user-select: none;
+}
+
+.save-load-header:hover {
+  background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+  color: #66bb6a;
+}
+
+.save-load-icon {
+  font-size: 1.3em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.save-load-content {
+  padding: 20px;
+}
+
+.save-load-info {
+  background: #2a2a2a;
+  border: 1px solid #317e30;
+  border-radius: 6px;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+}
+
+.save-load-info p {
+  margin: 0;
+  color: #ddd;
+  font-size: 0.9em;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.save-load-info strong {
+  color: #4caf50;
+}
+
+/* Button Grid */
+.save-load-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d1a0d 100%);
+  border: 2px solid #317e30;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.save-load-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 10px;
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-right: 1px solid #444;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  min-height: 85px;
+  font-family: "libre baskerville", serif;
+}
+
+.save-load-btn:last-child {
+  border-right: none;
+}
+
+.save-load-btn .btn-icon {
+  font-size: 1.6em;
+  transition: transform 0.3s ease;
+}
+
+.save-load-btn .btn-text {
+  font-size: 0.75em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.save-load-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(49, 126, 48, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.save-load-btn:hover::before {
+  left: 100%;
+}
+
+.save-load-btn.primary {
+  background: linear-gradient(135deg, #317e30 0%, #2a6528 100%);
+  color: white;
+  box-shadow: inset 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+.save-load-btn.primary:hover {
+  background: linear-gradient(135deg, #4caf50 0%, #317e30 100%);
+  color: #fff;
+  z-index: 1;
+}
+
+.save-load-btn.primary:hover .btn-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.save-load-btn.secondary {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a2a1a 100%);
+  color: #888;
+}
+
+.save-load-btn.secondary:hover {
+  background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+  color: #4caf50;
+  z-index: 1;
+}
+
+.save-load-btn.secondary:hover .btn-icon {
+  transform: scale(1.15);
+}
+
+.save-load-btn:active {
+  transform: translateY(-1px);
+}
+
+.backup-btn {
+  background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+  color: white;
+  border: 2px solid #42a5f5;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.backup-btn:hover {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  box-shadow: 0 6px 12px rgba(25, 118, 210, 0.4);
+  transform: translateY(-2px);
+}
+
+.backup-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Output Display */
+#output {
+  background: #000;
+  border: 2px solid #317e30;
+  border-radius: 6px;
+  padding: 15px;
+  font-family: "Courier New", monospace;
+  font-size: 0.85em;
+  color: #4caf50;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.5;
+  box-shadow: inset 0 0 15px rgba(49, 126, 48, 0.2);
+  text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+#output::-webkit-scrollbar {
+  width: 8px;
+}
+
+#output::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 10px;
+}
+
+#output::-webkit-scrollbar-thumb {
+  background: #317e30;
+  border-radius: 10px;
+}
+
+#output::-webkit-scrollbar-thumb:hover {
+  background: #4caf50;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .save-load-header {
+    padding: 12px 15px;
+    font-size: 1em;
+  }
+
+  .save-load-content {
+    padding: 15px;
+  }
+
+  .save-load-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .save-load-btn {
+    padding: 12px 8px;
+    min-height: 75px;
+    font-size: 0.8em;
+  }
+
+  .save-load-btn:nth-child(2n) {
+    border-right: none;
+  }
+
+  .save-load-btn:nth-child(-n + 2) {
+    border-bottom: 1px solid #444;
+  }
+
+  .save-load-btn .btn-icon {
+    font-size: 1.4em;
+  }
+
+  .save-load-btn .btn-text {
+    font-size: 0.6em;
+  }
+}
+
+@media (max-width: 480px) {
+  .save-load-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .save-load-btn {
+    min-height: 60px;
+  }
+}

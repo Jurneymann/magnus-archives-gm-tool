@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Example Location Name",
+    "address": "123 Example Street, London",
+    "description": "A detailed description of the location's appearance, atmosphere, history, and notable features. Include sensory details and anything that would help players visualize the space.",
+    "npcs": [
+      {
+        "name": "Example NPC Name",
+        "location": "Reception desk, front entrance"
+      },
+      {
+        "name": "Another NPC",
+        "location": "Office on second floor"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Example Enemy",
+        "location": "Basement, trapped behind locked door"
+      }
+    ],
+    "artefacts": [
+      {
+        "name": "Example Artefact",
+        "location": "Hidden in a secret compartment in the library"
+      }
+    ],
+    "leitners": [
+      {
+        "name": "Example Leitner Book",
+        "location": "On the top shelf, covered in dust"
+      }
+    ],
+    "equipment": "List general items and equipment that can be found here:\n- First aid kit in the bathroom\n- Flashlights in the utility closet\n- Old records in the filing cabinets\n- Keys to various rooms in the receptionist's desk",
+    "supernatural": "Describe any Entity influence, paranormal phenomena, or reality distortions present at this location. Include any ongoing effects, manifestations, or dangers that investigators might encounter.",
+    "gmNotes": "Optional: Add any private GM notes about using this location in your campaign, plot hooks, secrets, or reminders."
+  }
+]

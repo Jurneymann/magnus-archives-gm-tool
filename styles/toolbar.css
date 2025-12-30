@@ -1,0 +1,250 @@
+/* Quick Reference Toolbar */
+.quick-ref-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d1a0d 100%);
+  border-top: 2px solid #317e30;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  padding: 0;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.toolbar-button {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a2a1a 100%);
+  color: #888;
+  border: none;
+  border-right: 1px solid #444;
+  padding: 14px 10px;
+  cursor: pointer;
+  font-family: "Libre Baskerville", serif;
+  font-size: 0.85em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.toolbar-button:last-child {
+  border-right: none;
+}
+
+.toolbar-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(49, 126, 48, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.toolbar-button:hover::before {
+  left: 100%;
+}
+
+.toolbar-button:hover {
+  color: #4caf50;
+  background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+  z-index: 1;
+}
+
+.toolbar-button.active {
+  background: linear-gradient(135deg, #317e30 0%, #2a6528 100%);
+  color: #fff;
+  box-shadow: inset 0 0 10px rgba(76, 175, 80, 0.3);
+  z-index: 2;
+}
+
+.toolbar-button.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
+  background: #4caf50;
+  box-shadow: 0 0 10px #4caf50;
+}
+
+/* Reference Panels */
+.ref-panel {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d1a0d 100%);
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(76, 175, 80, 0.2);
+  padding: 20px;
+  max-width: 700px;
+  width: 90vw;
+  max-height: 60vh;
+  overflow-y: auto;
+  z-index: 9998;
+  display: none;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.ref-panel.active {
+  display: block;
+}
+
+.ref-panel h3 {
+  color: #4caf50;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.3em;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.ref-panel-content {
+  color: #e0e0e0;
+}
+
+/* Custom scrollbar for panels */
+.ref-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ref-panel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.ref-panel::-webkit-scrollbar-thumb {
+  background: rgba(76, 175, 80, 0.5);
+  border-radius: 4px;
+}
+
+.ref-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 175, 80, 0.7);
+}
+
+/* Difficulty Table in Panel */
+.ref-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+
+.ref-panel table th {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #4caf50;
+  font-weight: bold;
+}
+
+.ref-panel table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.ref-panel table tr:hover {
+  background: rgba(76, 175, 80, 0.1);
+}
+
+/* Stress Info */
+.stress-info-box,
+.damage-info-box,
+.special-roll-box {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.stress-info-box h4,
+.damage-info-box h4,
+.special-roll-box h4 {
+  color: #66bb6a;
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+}
+
+.stress-info-box p,
+.damage-info-box p,
+.special-roll-box p {
+  margin: 5px 0;
+  line-height: 1.6;
+}
+
+.stress-info-box strong,
+.damage-info-box strong,
+.special-roll-box strong {
+  color: #4caf50;
+}
+
+/* Warning colors */
+.warning-text {
+  color: #ff9800;
+  font-weight: bold;
+}
+
+.danger-text {
+  color: #f44336;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .quick-ref-toolbar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .toolbar-button {
+    padding: 12px 8px;
+    font-size: 0.75em;
+  }
+
+  .toolbar-button:nth-child(2n) {
+    border-right: none;
+  }
+
+  .toolbar-button:nth-child(-n + 2) {
+    border-bottom: 1px solid #444;
+  }
+
+  .ref-panel {
+    bottom: 50px;
+    max-width: 95vw;
+    padding: 15px;
+  }
+
+  .ref-panel h3 {
+    font-size: 1.1em;
+  }
+}

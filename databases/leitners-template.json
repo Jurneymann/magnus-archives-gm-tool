@@ -1,0 +1,13 @@
+[
+  {
+    "name": "Example Book Title",
+    "level": 5,
+    "relatedEntity": ["The Entity Name"],
+    "stress": {
+      "amount": 3,
+      "when": "Describe when stress is gained (e.g., 'Upon realizing the book's power; 1 with each use')"
+    },
+    "description": "A detailed description of the book's physical appearance (binding, age, condition, language), its contents, and what happens when someone reads it. Include what defense rolls are required, what abilities or effects it grants or imposes, duration of effects, and any conditions for use. Specify mechanical benefits and narrative consequences clearly.",
+    "fear": "Describe the worst possible outcome or horrifying consequence of reading or possessing this book. This should be a dire threat that escalates tension and makes the book dangerous to keep or use carelessly."
+  }
+]

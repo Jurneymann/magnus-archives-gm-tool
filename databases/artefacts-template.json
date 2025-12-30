@@ -1,0 +1,13 @@
+[
+  {
+    "name": "Example Artefact Name",
+    "level": 5,
+    "relatedEntity": ["The Entity Name"],
+    "stress": {
+      "amount": 3,
+      "when": "Describe when stress is gained (e.g., 'Upon realizing the artefact's power; 1 with each use')"
+    },
+    "description": "A detailed description of the artefact's appearance, physical properties, and how it functions. Include what happens when someone uses it, what defense rolls are required, duration of effects, and any conditions or limitations. Be specific about mechanical effects and narrative consequences.",
+    "fear": "Describe the worst possible outcome or horrifying consequence of using or possessing this artefact. This should be something that makes players think twice about keeping or using it."
+  }
+]

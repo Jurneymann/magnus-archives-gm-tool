@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Example Enemy",
+    "level": 3,
+    "health": 12,
+    "stress": 0,
+    "description": "A detailed description of the enemy's appearance, behavior, and motivations. Include physical characteristics, personality traits, and any background information relevant to encounters.",
+    "entity": ["The Entity Name"],
+    "damageInflicted": "Serious injury",
+    "movement": "Short",
+    "combat": "Description of how this enemy fights, what weapons or methods it uses, and any special combat tactics or preferences.",
+    "modifications": "Any skill modifications (e.g., 'Stealth as level 5; perception as level 4')",
+    "abilities": [
+      {
+        "name": "Ability Name",
+        "effect": "Detailed description of what the ability does, including any defense rolls required, damage dealt, duration of effects, and special conditions."
+      },
+      {
+        "name": "Second Ability",
+        "effect": "Another ability description following the same format. Add as many abilities as needed for your enemy."
+      }
+    ],
+    "gmNotes": "Optional: Add any private GM notes about using this enemy in your campaign."
+  }
+]

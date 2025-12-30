@@ -1,0 +1,152 @@
+/* Magnus Archives GM Tool - Main Styles */
+/* This file contains unique styles not covered by other modular CSS files */
+
+/* ==================== ENTITY POPUP MODAL ==================== */
+
+.entity-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.entity-modal-content {
+  background: #1a1a1a;
+  border: 3px solid #317e30;
+  border-radius: 10px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 50px rgba(49, 126, 48, 0.5);
+}
+
+.entity-modal-header {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a2a1a 100%);
+  padding: 20px 25px;
+  border-bottom: 2px solid #317e30;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.entity-modal-header h2 {
+  margin: 0;
+  color: #4caf50;
+  font-size: 1.5em;
+}
+
+.entity-close {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 2em;
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.entity-close:hover {
+  color: #f44336;
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.entity-modal-body {
+  padding: 25px;
+  color: #ddd;
+}
+
+.entity-modal-body p {
+  margin: 15px 0;
+  line-height: 1.6;
+}
+
+/* ==================== BASIC HTML ELEMENT STYLES ==================== */
+
+h1 {
+  color: #4caf50;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #4caf50;
+  border-bottom: 2px solid #317e30;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h3 {
+  color: #4caf50;
+  margin-top: 20px;
+}
+
+section {
+  background: #1a1a1a;
+  border: 2px solid #317e30;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+label {
+  color: #ddd;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+input,
+select,
+textarea {
+  width: calc(100% - 20px);
+  padding: 10px;
+  background: #2a2a2a;
+  border: 2px solid #317e30;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1em;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+}
+
+/* ==================== TEXT SECTION STYLES ==================== */
+
+.text-section {
+  background: #2a2a2a;
+  border: 2px solid #317e30;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.text-section h3 {
+  margin: 0 0 10px 0;
+  color: #4caf50;
+}
+
+.text-section p {
+  margin: 0;
+  color: #ddd;
+  line-height: 1.6;
+}

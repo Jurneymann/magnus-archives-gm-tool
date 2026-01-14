@@ -4,6 +4,8 @@ A comprehensive web-based toolset for running tabletop RPG campaigns set in The 
 
 **Created by**: [Jurneymann](https://github.com/Jurneymann)
 
+This project is free for use, but if you would like to contribute to my development costs, you can support me at [buymeacoffee/jurneymann](buymeacoffee.com/jurneymann)
+
 ![Magnus Archives GM Tool](assets/MagnusHeader.png)
 
 ## About The Magnus Archives

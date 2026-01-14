@@ -14,11 +14,14 @@ function createToolbar() {
     <button class="toolbar-button" onclick="toggleRefPanel('special')">Special Rolls</button>
     <button class="toolbar-button" onclick="toggleRefPanel('damage')">Damage Track</button>
   `;
-  // Insert toolbar at the top of the body, before all other content
-  document.body.insertBefore(toolbar, document.body.firstChild);
+  // Append toolbar to body
+  document.body.appendChild(toolbar);
 }
 
 function createReferencePanels() {
+  // Get theme colors once for all panels
+  const primaryColor = window.getThemeColor("primary");
+
   // Difficulty Panel
   const difficultyPanel = document.createElement("div");
   difficultyPanel.id = "ref-panel-difficulty";
@@ -40,7 +43,7 @@ function createReferencePanels() {
             (d) => `
             <tr>
               <td><strong>${d.difficulty}</strong></td>
-              <td style="text-align: center;"><strong style="color: #4CAF50;">${d.targetNumber}</strong></td>
+              <td style="text-align: center;"><strong style="color: ${primaryColor};">${d.targetNumber}</strong></td>
               <td>${d.description}</td>
               <td style="text-align: center;">${d.guidance}</td>
             </tr>
@@ -129,7 +132,7 @@ function createReferencePanels() {
       
       <div class="special-roll-box">
         <h4>Natural 20 (Major Effect)</h4>
-        <p>Rolling a 20 on a d20 grants a <strong style="color: #4CAF50;">major effect</strong>:</p>
+        <p>Rolling a 20 on a d20 grants a <strong style="color: ${primaryColor};">major effect</strong>:</p>
         <p><strong>Combat:</strong> +4 damage OR major effect (stun, disarm, etc.)</p>
         <p><strong>Non-Combat:</strong> Exceptional success with major bonus</p>
       </div>

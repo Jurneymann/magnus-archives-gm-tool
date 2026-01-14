@@ -42,6 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("✓ Reference library initialized");
   }
 
+  // Load Horror Mode state
+  if (typeof loadHorrorModeState === "function") {
+    loadHorrorModeState();
+    console.log("✓ Horror Mode state loaded");
+  }
+
   // Close multiselect dropdowns when clicking outside
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".custom-multiselect")) {

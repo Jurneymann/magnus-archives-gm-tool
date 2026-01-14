@@ -264,16 +264,22 @@ function renderPartyList() {
   const avatarEntity = (m) =>
     m.fullData?.avatar?.entityName || m.fullData?.avatar?.entity || "";
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryLight = window.getThemeColor("primaryLight");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   container.innerHTML = partyMembers
     .map(
       (member) => `
     <div class="party-member-card" style="background: linear-gradient(135deg, #1a1a1a 0%, #0d1a0d 100%); padding: 20px; border-radius: 10px; border: 3px solid ${
-      isAvatar(member) ? "#8b0000" : "#4CAF50"
-    }; box-shadow: 0 4px 15px rgba(49, 126, 48, 0.3); position: relative;">
+      isAvatar(member) ? "#8b0000" : primaryColor
+    }; box-shadow: 0 4px 15px ${primaryRgba(0.3)}; position: relative;">
       <div style="position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; align-items: center;">
         ${
           member.imported
-            ? '<div style="background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; color: #4CAF50;">📄 Imported</div>'
+            ? `<div style="background: ${primaryRgba(
+                0.2
+              )}; border: 1px solid ${primaryColor}; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; color: ${primaryColor};">📄 Imported</div>`
             : ""
         }
         ${
@@ -281,6 +287,9 @@ function renderPartyList() {
             ? '<div style="background: rgba(139, 0, 0, 0.3); border: 1px solid #8b0000; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; color: #ff6b6b; animation: avatarPulse 2s infinite;">👁️ Avatar</div>'
             : ""
         }
+        <button onclick="event.stopPropagation(); customizePartyMemberToken(${
+          member.id
+        })" style="background: #9C27B0; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em;" title="Customize Battle Map Token">🎨</button>
         <button onclick="event.stopPropagation(); addPartyMemberToCombat(${
           member.id
         })" style="background: #ff9800; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em;" title="Add to Combat Tracker">⚔️ Combat</button>
@@ -296,13 +305,13 @@ function renderPartyList() {
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
           <span id="arrow-${
             member.id
-          }" style="color: #4CAF50; font-size: 1.2em;">${
+          }" style="color: ${primaryColor}; font-size: 1.2em;">${
         expandedStates[member.id] ? "▼" : "▶"
       }</span>
           ${
             member.imported
               ? `<h3 style="margin: 0; color: ${
-                  isAvatar(member) ? "#ff6b6b" : "#4CAF50"
+                  isAvatar(member) ? "#ff6b6b" : primaryColor
                 }; font-size: 1.3em;">${member.name}</h3>`
               : `<input 
                   type="text" 
@@ -310,12 +319,14 @@ function renderPartyList() {
                   placeholder="Character Name" 
                   onchange="updatePartyMember(${member.id}, 'name', this.value)"
                   onclick="event.stopPropagation()"
-                  style="font-size: 1.2em; font-weight: bold; background: rgba(0,0,0,0.3); border: 1px solid #4CAF50; padding: 8px; border-radius: 4px; color: #4CAF50;"
+                  style="font-size: 1.2em; font-weight: bold; background: rgba(0,0,0,0.3); border: 1px solid ${primaryColor}; padding: 8px; border-radius: 4px; color: ${primaryColor};"
                 />`
           }
-          <span style="background: rgba(76, 175, 80, 0.2); padding: 4px 10px; border-radius: 4px; color: #4CAF50; font-weight: bold; font-size: 0.9em;">Tier ${
-            member.tier
-          }</span>
+          <span style="background: ${primaryRgba(
+            0.2
+          )}; padding: 4px 10px; border-radius: 4px; color: ${primaryColor}; font-weight: bold; font-size: 0.9em;">Tier ${
+        member.tier
+      }</span>
         </div>
         <div style="color: #888; margin-left: 32px; font-size: 0.95em;">
           ${
@@ -336,7 +347,9 @@ function renderPartyList() {
       <!-- Expanded Details Section -->
       <div id="details-${member.id}" style="display: ${
         expandedStates[member.id] ? "block" : "none"
-      }; margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(76, 175, 80, 0.3);">
+      }; margin-top: 20px; padding-top: 20px; border-top: 2px solid ${primaryRgba(
+        0.3
+      )};">
         ${
           member.imported
             ? `
@@ -362,7 +375,9 @@ function renderPartyList() {
         
         <!-- Progression Stats -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
-          <div style="padding: 10px; background: rgba(76, 175, 80, 0.1); border-radius: 6px;">
+          <div style="padding: 10px; background: ${primaryRgba(
+            0.1
+          )}; border-radius: 6px;">
             <label style="color: #888; font-size: 0.9em; display: block; margin-bottom: 5px;">Tier</label>
             <input type="number" value="${
               member.tier
@@ -373,9 +388,15 @@ function renderPartyList() {
           ${
             member.xp !== undefined
               ? `
-          <div style="padding: 10px; background: rgba(76, 175, 80, 0.1); border-radius: 6px;">
+          <div style="padding: 10px; background: ${primaryRgba(
+            0.1
+          )}; border-radius: 6px;">
             <label style="color: #888; font-size: 0.9em; display: block; margin-bottom: 5px;">XP</label>
-            <input type="number" value="${member.xp}" min="0" onchange="updatePartyMember(${member.id}, 'xp', parseInt(this.value))" style="width: 60px; font-size: 1.1em; font-weight: bold;" />
+            <input type="number" value="${
+              member.xp
+            }" min="0" onchange="updatePartyMember(${
+                  member.id
+                }, 'xp', parseInt(this.value))" style="width: 60px; font-size: 1.1em; font-weight: bold;" />
           </div>
           `
               : ""
@@ -383,9 +404,15 @@ function renderPartyList() {
            ${
              member.effort !== undefined
                ? `
-          <div style="padding: 10px; background: rgba(76, 175, 80, 0.1); border-radius: 6px;">
+          <div style="padding: 10px; background: ${primaryRgba(
+            0.1
+          )}; border-radius: 6px;">
             <label style="color: #888; font-size: 0.9em; display: block; margin-bottom: 5px;">Effort</label>
-            <input type="number" value="${member.effort}" min="1" max="6" onchange="updatePartyMember(${member.id}, 'effort', parseInt(this.value))" style="width: 50px; font-size: 1.1em; font-weight: bold;" />
+            <input type="number" value="${
+              member.effort
+            }" min="1" max="6" onchange="updatePartyMember(${
+                   member.id
+                 }, 'effort', parseInt(this.value))" style="width: 50px; font-size: 1.1em; font-weight: bold;" />
           </div>
           `
                : ""
@@ -454,11 +481,15 @@ function renderPartyList() {
         </div>
         
         <!-- Stat Pools -->
-        <div style="background: rgba(76, 175, 80, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(76, 175, 80, 0.2); margin-bottom: 15px;">
-          <h4 style="margin: 0 0 10px 0; color: #4CAF50;">Stat Pools</h4>
+        <div style="background: ${primaryRgba(
+          0.05
+        )}; padding: 15px; border-radius: 8px; border: 1px solid ${primaryRgba(
+        0.2
+      )}; margin-bottom: 15px;">
+          <h4 style="margin: 0 0 10px 0; color: ${primaryColor};">Stat Pools</h4>
           <div style="display: grid; gap: 10px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="width: 80px; color: #66bb6a; font-weight: bold;">Might:</span>
+              <span style="width: 80px; color: ${primaryLight}; font-weight: bold;">Might:</span>
               <input type="number" value="${
                 member.might.current
               }" onchange="updatePartyMember(${
@@ -478,7 +509,7 @@ function renderPartyList() {
       }, 'might.edge', parseInt(this.value))" style="width: 50px;" />
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="width: 80px; color: #66bb6a; font-weight: bold;">Speed:</span>
+              <span style="width: 80px; color: ${primaryLight}; font-weight: bold;">Speed:</span>
               <input type="number" value="${
                 member.speed.current
               }" onchange="updatePartyMember(${
@@ -498,7 +529,7 @@ function renderPartyList() {
       }, 'speed.edge', parseInt(this.value))" style="width: 50px;" />
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="width: 80px; color: #66bb6a; font-weight: bold;">Intellect:</span>
+              <span style="width: 80px; color: ${primaryLight}; font-weight: bold;">Intellect:</span>
               <input type="number" value="${
                 member.intellect.current
               }" onchange="updatePartyMember(${
@@ -524,7 +555,7 @@ function renderPartyList() {
         ${
           member.fullData?.characterArc
             ? `
-        <details style="margin-bottom: 15px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid #4CAF50;">
+        <details style="margin-bottom: 15px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid ${primaryColor};">
           <summary style="padding: 12px; cursor: pointer; font-weight: bold; color: #4CAF50;">Character Arc</summary>
           <div style="padding: 15px;">
             ${

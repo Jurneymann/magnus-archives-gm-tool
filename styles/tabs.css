@@ -5,13 +5,14 @@
   grid-template-columns: repeat(4, 1fr);
   justify-content: center;
   gap: 0;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   padding: 0;
   background: linear-gradient(135deg, #1a1a1a 0%, #0d1a0d 100%);
   border: 2px solid #317e30;
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   overflow: hidden;
+  transition: border-color 1.2s ease, background 1.2s ease;
 }
 
 .tab-button {
@@ -26,7 +27,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 1.2s ease;
   border-radius: 0;
   position: relative;
   overflow: hidden;
@@ -87,6 +88,7 @@
   height: 3px;
   background: #4caf50;
   box-shadow: 0 0 10px #4caf50;
+  transition: background 1.2s ease, box-shadow 1.2s ease;
 }
 
 /* Tab Content */
@@ -212,4 +214,40 @@
   .tab-button:last-child {
     border-bottom: none;
   }
+}
+
+/* ==================== HORROR MODE OVERRIDES ==================== */
+
+body.horror-mode-active .tab-buttons {
+  border-color: #8b0000;
+  background: linear-gradient(135deg, #1a1a1a 0%, #1a0000 100%);
+  transition: border-color 1.2s ease, background 1.2s ease;
+}
+
+body.horror-mode-active .tab-button::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 0, 0, 0.3),
+    transparent
+  );
+  transition: background 1.2s ease;
+}
+
+body.horror-mode-active .tab-button:hover {
+  color: #ff0000;
+  background: linear-gradient(135deg, #3a2a2a 0%, #2a1a1a 100%);
+  transition: all 1.2s ease;
+}
+
+body.horror-mode-active .tab-button.active {
+  background: linear-gradient(135deg, #8b0000 0%, #6a0000 100%);
+  box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.3);
+  transition: all 1.2s ease;
+}
+
+body.horror-mode-active .tab-button.active::after {
+  background: #ff0000;
+  box-shadow: 0 0 10px #ff0000;
+  transition: background 1.2s ease, box-shadow 1.2s ease;
 }

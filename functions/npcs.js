@@ -534,6 +534,9 @@ var renderNPCList = function (
           <button onclick="addNPCToCombat(${
             npc.id
           })" class="button" style="background: #4CAF50; color: #fff; padding: 6px 12px; flex: 1; min-width: 120px;">⚔️ Add to Combat</button>
+          <button onclick="customizeNPCToken(${
+            npc.id
+          })" class="button" style="background: #9C27B0; color: #fff; padding: 6px 12px; flex: 1; min-width: 120px;">🎨 Token</button>
           <button onclick="editNPC(${
             npc.id
           })" class="button" style="background: #2196F3; color: #fff; padding: 6px 12px; flex: 1; min-width: 120px;">✏️ Edit</button>

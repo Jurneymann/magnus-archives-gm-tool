@@ -33,6 +33,13 @@ This GM Tool is designed to support the **[The Magnus Archives Roleplaying Game]
 ### ⚔️ Combat System
 
 - **Combat Tracker**: Full-featured initiative tracker with three phases (Setup, Initiative, Active)
+- **Battle Map**: Visual grid-based position tracking with terrain tools (NEW!)
+  - Configurable map size (5-50 metres)
+  - Combatant tokens with color coding (PCs, NPCs, Enemies)
+  - Drag-and-drop movement for easy positioning
+  - Terrain tools (walls, furniture, landscape, water, difficult terrain)
+  - Save/load map presets
+  - Zoom controls (50%-200%)
 - **Quick Add**: Rapidly add combatants with name, health, and armor
 - **Random Initiative**: Roll initiative for all NPCs with one click
 - **Health/Stress Tracking**: Real-time tracking of combatant status with visual indicators
@@ -120,6 +127,8 @@ Magnus Archives GM Tool/
 ├── ARTEFACTS_README.md         # Artefacts JSON format guide
 ├── LEITNERS_README.md          # Leitner's Books JSON format guide
 ├── LOCATIONS_README.md         # Locations JSON format guide
+├── BATTLE_MAP_README.md        # Battle Map system documentation (NEW!)
+├── BATTLE_MAP_QUICK_START.md  # Quick start guide for Battle Maps (NEW!)
 ├── assets/                     # Images and icons
 │   ├── favicon.png
 │   ├── MagnusHeader.png
@@ -128,9 +137,11 @@ Magnus Archives GM Tool/
 │   ├── artefacts-template.json
 │   ├── bestiary-template.json
 │   ├── leitners-template.json
-│   └── locations-template.json
+│   ├── locations-template.json
+│   └── battle-map-template.json  # Example battle map (NEW!)
 ├── functions/                  # Core JavaScript modules
 │   ├── artefacts.js            # Artefact management
+│   ├── battle-map.js           # Battle map system (NEW!)
 │   ├── bestiary.js             # Enemy/creature management
 │   ├── combat.js               # Combat tracker system
 │   ├── dashboard.js            # Dashboard and stats

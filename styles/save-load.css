@@ -33,17 +33,6 @@
 
 .save-load-icon {
   font-size: 1.3em;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
 }
 
 .save-load-content {
@@ -283,3 +272,67 @@
     min-height: 60px;
   }
 }
+
+/* ==================== HORROR MODE OVERRIDES FOR SAVE/LOAD SECTION ==================== */
+
+/* Save/Load section container */
+body.horror-mode-active .save-load-section {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1a0000 100%) !important;
+  border-color: #8b0000 !important;
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3) !important;
+}
+
+/* Save/Load header */
+body.horror-mode-active .save-load-header {
+  background: linear-gradient(135deg, #2a2a2a 0%, #2a1a1a 100%) !important;
+  color: #ff0000 !important;
+  border-bottom-color: #8b0000 !important;
+}
+
+body.horror-mode-active .save-load-header:hover {
+  background: linear-gradient(135deg, #2a1a1a 0%, #1a0000 100%) !important;
+  color: #ff6b6b !important;
+}
+
+/* Save/Load info boxes */
+body.horror-mode-active .save-load-info {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .save-load-info strong {
+  color: #ff0000 !important;
+}
+
+/* Save/Load buttons grid */
+body.horror-mode-active .save-load-buttons {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1a0000 100%) !important;
+  border-color: #8b0000 !important;
+}
+
+/* Individual save/load buttons */
+body.horror-mode-active .save-load-btn {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%) !important;
+  border-right-color: rgba(139, 0, 0, 0.5) !important;
+}
+
+body.horror-mode-active .save-load-btn:hover {
+  background: linear-gradient(135deg, #3a2a2a 0%, #2a1a1a 100%) !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active .save-load-btn.save {
+  background: linear-gradient(135deg, #1a2a1a 0%, #0d1a0d 100%) !important;
+}
+
+body.horror-mode-active .save-load-btn.save:hover {
+  background: linear-gradient(135deg, #2a1a1a 0%, #1a0000 100%) !important;
+}
+
+body.horror-mode-active .save-load-btn.load {
+  background: linear-gradient(135deg, #1a1a2a 0%, #0d0d1a 100%) !important;
+}
+
+body.horror-mode-active .save-load-btn.load:hover {
+  background: linear-gradient(135deg, #2a1a1a 0%, #1a0000 100%) !important;
+}
+

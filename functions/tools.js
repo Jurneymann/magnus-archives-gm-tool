@@ -68,9 +68,14 @@ function generateRandomNPC() {
   ];
   const entity = entities[Math.floor(Math.random() * entities.length)];
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   container.innerHTML = `
-    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 6px; border: 1px solid #4CAF50; margin-top: 10px;">
-      <h4 style="color: #4CAF50; margin-top: 0;">Generated NPC</h4>
+    <div style="background: ${primaryRgba(
+      0.1
+    )}; padding: 15px; border-radius: 6px; border: 1px solid ${primaryColor}; margin-top: 10px;">
+      <h4 style="color: ${primaryColor}; margin-top: 0;">Generated NPC</h4>
       <p><strong>Personality:</strong> ${descriptor}, ${trait}</p>
       <p><strong>Occupation:</strong> ${occupation}</p>
       <p><strong>Entity Connection:</strong> ${entity}</p>
@@ -135,9 +140,14 @@ function generateRandomEncounter() {
     count = Math.floor(Math.random() * 2) + 1; // 1-2 equal creatures
   }
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   container.innerHTML = `
-    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 6px; border: 1px solid #4CAF50; margin-top: 10px;">
-      <h4 style="color: #4CAF50; margin-top: 0;">Random Encounter</h4>
+    <div style="background: ${primaryRgba(
+      0.1
+    )}; padding: 15px; border-radius: 6px; border: 1px solid ${primaryColor}; margin-top: 10px;">
+      <h4 style="color: ${primaryColor}; margin-top: 0;">Random Encounter</h4>
       <p><strong>${count}x ${creature.name}</strong> (Level ${
     creature.level
   })</p>
@@ -180,9 +190,14 @@ function generateRandomCypher() {
   const cypher =
     appropriateCyphers[Math.floor(Math.random() * appropriateCyphers.length)];
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   container.innerHTML = `
-    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 6px; border: 1px solid #4CAF50; margin-top: 10px;">
-      <h4 style="color: #4CAF50; margin-top: 0;">${cypher.name}</h4>
+    <div style="background: ${primaryRgba(
+      0.1
+    )}; padding: 15px; border-radius: 6px; border: 1px solid ${primaryColor}; margin-top: 10px;">
+      <h4 style="color: ${primaryColor}; margin-top: 0;">${cypher.name}</h4>
       <p><strong>Level:</strong> ${requestedLevel}d6</p>
       ${cypher.entity ? `<p><strong>Entity:</strong> ${cypher.entity}</p>` : ""}
       ${cypher.form ? `<p><strong>Form:</strong> ${cypher.form}</p>` : ""}
@@ -255,9 +270,14 @@ function generateInvestigationHook() {
   ];
   const entity = entities[Math.floor(Math.random() * entities.length)];
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   container.innerHTML = `
-    <div style="background: rgba(76, 175, 80, 0.1); padding: 15px; border-radius: 6px; border: 1px solid #4CAF50; margin-top: 10px;">
-      <h4 style="color: #4CAF50; margin-top: 0;">Investigation Hook</h4>
+    <div style="background: ${primaryRgba(
+      0.1
+    )}; padding: 15px; border-radius: 6px; border: 1px solid ${primaryColor}; margin-top: 10px;">
+      <h4 style="color: ${primaryColor}; margin-top: 0;">Investigation Hook</h4>
       <p>A <strong>${witness}</strong> reports <strong>${mystery}</strong> at a <strong>${location}</strong>.</p>
       <p style="margin-top: 10px;"><strong>Potential Entity:</strong> ${entity}</p>
       <div style="margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
@@ -271,9 +291,11 @@ function quickRoll(sides) {
   const result = Math.floor(Math.random() * sides) + 1;
   const container = document.getElementById("quickRollResult");
 
+  const primaryColor = window.getThemeColor("primary");
+
   if (container) {
     container.innerHTML = `
-      <div style="font-size: 2em; color: #4CAF50; font-weight: bold;">
+      <div style="font-size: 2em; color: ${primaryColor}; font-weight: bold;">
         ${result}
       </div>
       <div style="color: #888; margin-top: 5px;">

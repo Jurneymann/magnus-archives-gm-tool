@@ -106,6 +106,10 @@ function renderBestiary() {
     return;
   }
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryLight = window.getThemeColor("primaryLight");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   container.innerHTML =
     `
     <div style="color: #888; margin-bottom: 15px; font-size: 0.9em;">
@@ -115,8 +119,10 @@ function renderBestiary() {
     filtered
       .map(
         (creature) => `
-    <details style="margin-bottom: 10px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid #4CAF50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);">
-      <summary style="padding: 12px; cursor: pointer; font-weight: bold; color: #4CAF50;">
+    <details style="margin-bottom: 10px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid ${primaryColor}; box-shadow: 0 0 10px ${primaryRgba(
+          0.3
+        )};">
+      <summary style="padding: 12px; cursor: pointer; font-weight: bold; color: ${primaryColor};">
         ${creature.name} 
         <span style="color: #ff9800; margin-left: 8px;">Level ${
           creature.level
@@ -133,53 +139,55 @@ function renderBestiary() {
             : "";
         })()}
       </summary>
-      <div style="padding: 15px; border-top: 1px solid rgba(76, 175, 80, 0.3);">
+      <div style="padding: 15px; border-top: 1px solid ${primaryRgba(0.3)};">
         ${
           creature.description
             ? `<p style="margin-bottom: 15px; color: #ccc;">${creature.description}</p>`
             : ""
         }
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 15px; padding: 10px; background: rgba(76, 175, 80, 0.1); border-radius: 4px;">
-          <div><strong style="color: #4CAF50;">Level:</strong> ${
-            creature.level
-          }</div>
-          <div><strong style="color: #4CAF50;">Health:</strong> ${
-            creature.health !== undefined ? creature.health : "N/A"
-          }</div>
-          <div><strong style="color: #4CAF50;">Stress:</strong> ${
-            creature.stress !== undefined ? creature.stress : "N/A"
-          }</div>
-          <div><strong style="color: #4CAF50;">Damage:</strong> ${
-            creature.damageInflicted || "Varies"
-          }</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 15px; padding: 10px; background: ${primaryRgba(
+          0.1
+        )}; border-radius: 4px;">
+          <div><strong style="color: ${primaryColor};">Level:</strong> ${
+          creature.level
+        }</div>
+          <div><strong style="color: ${primaryColor};">Health:</strong> ${
+          creature.health !== undefined ? creature.health : "N/A"
+        }</div>
+          <div><strong style="color: ${primaryColor};">Stress:</strong> ${
+          creature.stress !== undefined ? creature.stress : "N/A"
+        }</div>
+          <div><strong style="color: ${primaryColor};">Damage:</strong> ${
+          creature.damageInflicted || "Varies"
+        }</div>
         </div>
         
         ${
           creature.movement
-            ? `<p style="margin-bottom: 8px;"><strong style="color: #4CAF50;">Movement:</strong> ${creature.movement}</p>`
+            ? `<p style="margin-bottom: 8px;"><strong style="color: ${primaryColor};">Movement:</strong> ${creature.movement}</p>`
             : ""
         }
         ${
           creature.combat
-            ? `<p style="margin-bottom: 8px;"><strong style="color: #4CAF50;">Combat:</strong> ${creature.combat}</p>`
+            ? `<p style="margin-bottom: 8px;"><strong style="color: ${primaryColor};">Combat:</strong> ${creature.combat}</p>`
             : ""
         }
         ${
           creature.modifications
-            ? `<p style="margin-bottom: 8px;"><strong style="color: #4CAF50;">Modifications:</strong> ${creature.modifications}</p>`
+            ? `<p style="margin-bottom: 8px;"><strong style="color: ${primaryColor};">Modifications:</strong> ${creature.modifications}</p>`
             : ""
         }
         ${
           creature.abilities && creature.abilities.length > 0
             ? `
           <div style="margin-top: 15px;">
-            <strong style="color: #4CAF50; font-size: 1.05em;">Abilities:</strong>
+            <strong style="color: ${primaryColor}; font-size: 1.05em;">Abilities:</strong>
             <ul style="margin: 8px 0; padding-left: 20px;">
               ${creature.abilities
                 .map(
                   (ability) =>
-                    `<li style="margin-bottom: 8px;"><strong style="color: #66bb6a;">${ability.name}:</strong> ${ability.effect}</li>`
+                    `<li style="margin-bottom: 8px;"><strong style="color: ${primaryLight};">${ability.name}:</strong> ${ability.effect}</li>`
                 )
                 .join("")}
             </ul>
@@ -187,13 +195,27 @@ function renderBestiary() {
         `
             : ""
         }
-        <button 
-          class="button" 
-          style="margin-top: 15px; width: 100%; background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50;"
-          onclick="addToEncounter('${creature.name.replace(/'/g, "\\'")}')"
-          title="Add this creature to the combat tracker">
-          ⚔️ Add to Encounter
-        </button>
+        <div style="display: flex; gap: 8px; margin-top: 15px;">
+          <button 
+            class="button" 
+            style="flex: 1; background: ${primaryRgba(
+              0.2
+            )}; border: 1px solid ${primaryColor}; padding: 10px; min-height: 40px;"
+            onclick="addToEncounter('${creature.name.replace(/'/g, "\\'")}')"
+            title="Add this creature to the combat tracker">
+            ⚔️ Add to Encounter
+          </button>
+          <button 
+            class="button" 
+            style="flex: 1; background: rgba(156, 39, 176, 0.2); border: 1px solid #9C27B0; padding: 10px; min-height: 40px;"
+            onclick="if(typeof customizeBestiaryToken === 'function') { customizeBestiaryToken('${creature.name.replace(
+              /'/g,
+              "\\'"
+            )}'); } else { alert('Token customization not loaded'); }"
+            title="Set custom battle map token">
+            🎨 Customize Token
+          </button>
+        </div>
       </div>
     </details>
   `
@@ -235,11 +257,13 @@ function addCustomAbility() {
 
   const abilityDiv = document.createElement("div");
   abilityDiv.id = `customAbility${customAbilityCount}`;
+  const primaryColor = window.getThemeColor("primary");
+
   abilityDiv.style.cssText =
     "display: grid; grid-template-columns: 1fr 2fr auto; gap: 10px; margin-bottom: 10px; padding: 10px; background: rgba(0, 0, 0, 0.2); border-radius: 4px;";
   abilityDiv.innerHTML = `
-    <input type="text" id="abilityName${customAbilityCount}" placeholder="Ability name..." style="padding: 6px; background: rgba(0, 0, 0, 0.3); border: 1px solid #4caf50; border-radius: 4px; color: #e0e0e0;" />
-    <input type="text" id="abilityEffect${customAbilityCount}" placeholder="Effect description..." style="padding: 6px; background: rgba(0, 0, 0, 0.3); border: 1px solid #4caf50; border-radius: 4px; color: #e0e0e0;" />
+    <input type="text" id="abilityName${customAbilityCount}" placeholder="Ability name..." style="padding: 6px; background: rgba(0, 0, 0, 0.3); border: 1px solid ${primaryColor}; border-radius: 4px; color: #e0e0e0;" />
+    <input type="text" id="abilityEffect${customAbilityCount}" placeholder="Effect description..." style="padding: 6px; background: rgba(0, 0, 0, 0.3); border: 1px solid ${primaryColor}; border-radius: 4px; color: #e0e0e0;" />
     <button class="button" onclick="removeCustomAbility(${customAbilityCount})" style="padding: 6px 12px; background: rgba(211, 47, 47, 0.2); border-color: #d32f2f;">✕</button>
   `;
   container.appendChild(abilityDiv);
@@ -642,25 +666,34 @@ function renderCustomEnemies() {
               )}</div></div>`
             : ""
         }
-        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px;">
+        <div style="display: flex; gap: 8px; margin-top: 15px;">
           <button 
             class="button" 
-            style="background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; color: #fff; padding: 6px 12px;"
+            style="flex: 1; background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; color: #fff; padding: 10px; min-height: 40px;"
             onclick="addCustomToEncounter(${enemy.id})"
             title="Add this enemy to the combat tracker">
             ⚔️ Add to Encounter
           </button>
-
           <button 
             class="button" 
-            style="background: #2196F3; color: #fff; padding: 6px 12px;"
+            style="flex: 1; background: rgba(156, 39, 176, 0.2); border: 1px solid #9C27B0; color: #fff; padding: 10px; min-height: 40px;"
+            onclick="if(typeof customizeBestiaryToken === 'function') { customizeBestiaryToken('${enemy.name.replace(
+              /'/g,
+              "\\'"
+            )}'); } else { alert('Token customization not loaded'); }"
+            title="Set custom battle map token">
+            🎨 Customize Token
+          </button>
+          <button 
+            class="button" 
+            style="flex: 1; background: #2196F3; color: #fff; padding: 10px; min-height: 40px;"
             onclick="editCustomEnemy(${enemy.id})"
             title="Edit this custom enemy">
             ✏️ Edit
           </button>
           <button 
             class="button" 
-            style="background: rgba(211, 47, 47, 0.2); border: 1px solid #d32f2f; color: #fff; padding: 6px 12px;"
+            style="flex: 1; background: rgba(211, 47, 47, 0.2); border: 1px solid #d32f2f; color: #fff; padding: 10px; min-height: 40px;"
             onclick="deleteCustomEnemy(${enemy.id})"
             title="Delete this custom enemy">
             🗑️ Delete

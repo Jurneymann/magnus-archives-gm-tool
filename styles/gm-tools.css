@@ -26,7 +26,7 @@
   overflow: hidden;
   box-shadow: 0 8px 30px rgba(49, 126, 48, 0.3);
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 1.2s ease;
 }
 
 .dashboard-card::before {
@@ -63,6 +63,8 @@
   letter-spacing: 2px;
   text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
   border-bottom: 2px solid #317e30;
+  transition: color 1.2s ease, text-shadow 1.2s ease,
+    border-bottom-color 1.2s ease, background 1.2s ease;
 }
 
 .dashboard-card > div {
@@ -99,7 +101,7 @@
   border-radius: 6px;
   color: #fff;
   font-size: 1em;
-  transition: all 0.2s ease;
+  transition: all 1.2s ease;
   font-family: inherit;
 }
 
@@ -144,7 +146,7 @@
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(49, 126, 48, 0.2);
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 1.2s ease;
   margin-bottom: 15px;
 }
 
@@ -189,7 +191,7 @@
   color: #fff;
   padding: 10px 12px;
   border-radius: 6px;
-  transition: all 0.2s ease;
+  transition: all 1.2s ease;
 }
 
 .party-member-card input:focus,
@@ -210,7 +212,7 @@
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(49, 126, 48, 0.2);
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 1.2s ease;
   margin-bottom: 15px;
 }
 
@@ -560,7 +562,7 @@
   padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 1.2s ease;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -588,6 +590,7 @@
   overflow: hidden;
   box-shadow: 0 8px 30px rgba(49, 126, 48, 0.3);
   position: relative;
+  transition: border-color 1.2s ease, box-shadow 1.2s ease;
 }
 
 /* Reference tab sections should be transparent containers */
@@ -613,6 +616,8 @@
   text-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
   padding-bottom: 15px;
   border-bottom: 2px solid rgba(76, 175, 80, 0.3);
+  transition: color 1.2s ease, text-shadow 1.2s ease,
+    border-bottom-color 1.2s ease;
 }
 
 .section::before {
@@ -644,6 +649,8 @@
   text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
   border: none;
   border-bottom: 2px solid #317e30;
+  transition: color 1.2s ease, text-shadow 1.2s ease,
+    border-bottom-color 1.2s ease, background 1.2s ease;
 }
 
 .section > *:not(h2:first-child) {
@@ -948,4 +955,1915 @@
 .entity-clickable:hover {
   opacity: 0.8;
   text-decoration-style: solid;
+}
+
+/* ==================== BATTLE MAP ==================== */
+.battle-map-controls {
+  margin-bottom: 15px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid #4caf50;
+}
+
+.battle-map-grid {
+  position: relative;
+  display: inline-block;
+  background: #1a1a1a;
+  border: 2px solid #4caf50;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+}
+
+.grid-cell {
+  position: absolute;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  box-sizing: border-box;
+  transition: all 0.1s;
+}
+
+.grid-cell:hover {
+  border-color: rgba(76, 175, 80, 0.8) !important;
+  background-color: rgba(76, 175, 80, 0.1) !important;
+}
+
+.combatant-token {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s;
+  user-select: none;
+  font-weight: bold;
+  touch-action: none; /* Prevent touch scrolling during drag */
+}
+
+.combatant-token:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+}
+
+.combatant-token:active {
+  cursor: grabbing !important;
+}
+
+.combatant-token.selected {
+  animation: pulse 1s infinite;
+  z-index: 200 !important;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 235, 59, 0.8);
+  }
+  50% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 235, 59, 1);
+  }
+}
+
+.tool-button {
+  padding: 8px 12px;
+  border: 1px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 100px;
+  font-family: "Libre Baskerville", serif;
+}
+
+.tool-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tool-button.active {
+  box-shadow: 0 0 15px currentColor, inset 0 0 10px rgba(255, 255, 255, 0.1);
+  font-weight: bold;
+  transform: scale(1.05);
+}
+/* ==================== HORROR MODE ==================== */
+
+/* Header Container - holds both normal header and horror mode banner */
+.header-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 30px auto;
+  position: relative;
+  min-height: 330px;
+}
+
+/* Horror Mode Banner - replaces header image when active */
+.horror-mode-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 330px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%);
+  border: 3px solid #8b0000;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(139, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.3);
+  padding: 20px;
+  box-sizing: border-box;
+  animation: horrorPulse 3s ease-in-out infinite;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s ease;
+}
+
+@keyframes horrorPulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(139, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(139, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.5);
+  }
+}
+
+.horror-mode-banner.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.horror-mode-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  text-align: center;
+}
+
+.horror-title-main {
+  font-family: "Libre Baskerville", serif;
+  font-size: 2.5em;
+  font-weight: 700;
+  color: #ff0000;
+  margin: 0;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(139, 0, 0, 0.6);
+  animation: horrorTextPulse 2s ease-in-out infinite;
+}
+
+.horror-title-sub {
+  font-family: "Libre Baskerville", serif;
+  font-size: 1.8em;
+  font-weight: 600;
+  color: #ff6b6b;
+  margin: 0;
+  letter-spacing: 4px;
+  text-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+}
+
+.horror-title-desc {
+  font-family: "Libre Baskerville", serif;
+  font-size: 1em;
+  font-weight: 400;
+  font-style: italic;
+  color: #ff6b6b;
+  margin-top: 20px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+}
+
+@keyframes horrorTextPulse {
+  0%,
+  100% {
+    text-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(139, 0, 0, 0.6);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(255, 0, 0, 1), 0 0 60px rgba(139, 0, 0, 0.8);
+  }
+}
+
+.horror-mode-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.horror-mode-skull {
+  font-size: 1.8em;
+  animation: horrorShake 2s ease-in-out infinite;
+}
+
+@keyframes horrorShake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+.horror-mode-title {
+  font-family: "Libre Baskerville", serif;
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #ff0000;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(139, 0, 0, 0.6);
+  letter-spacing: 3px;
+}
+
+.horror-mode-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.horror-level-btn {
+  background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%);
+  border: 2px solid #ff0000;
+  color: #ff6b6b;
+  font-size: 1.8em;
+  font-weight: bold;
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+  font-family: "Libre Baskerville", serif;
+  line-height: 1;
+}
+
+.horror-level-btn:hover {
+  background: linear-gradient(135deg, #a00000 0%, #6a0000 100%);
+  border-color: #ff3333;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.horror-level-btn:active {
+  transform: scale(0.95);
+}
+
+.horror-level-display {
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid #8b0000;
+  border-radius: 8px;
+  padding: 8px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 80px;
+}
+
+.horror-level-label {
+  font-size: 0.7em;
+  color: #ff6b6b;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.horror-level-number {
+  font-size: 2em;
+  font-weight: bold;
+  color: #ff0000;
+  text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+  font-family: "Libre Baskerville", serif;
+}
+
+/* Horror Mode Toggle Button (in Combat Tracker) */
+.horror-mode-toggle {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 2px solid #555;
+  color: #888;
+  font-weight: bold;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: "Libre Baskerville", serif;
+  font-size: 0.9em;
+  letter-spacing: 1px;
+  min-width: 70px;
+}
+
+.horror-mode-toggle:hover {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.horror-mode-toggle.active {
+  background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%);
+  border-color: #ff0000;
+  color: #ff0000;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+}
+
+.horror-mode-toggle.active .toggle-text::before {
+  content: "ON";
+}
+
+.horror-mode-toggle:not(.active) .toggle-text::before {
+  content: "OFF";
+}
+
+/* Adjust page padding when Horror Mode banner is active */
+body:has(#horrorModeBanner[style*="display: flex"]) .sheet {
+  margin-top: 70px;
+}
+/* ==================== HORROR MODE THEME OVERRIDES ==================== */
+/* When Horror Mode is active, switch from green to red theme */
+
+body.horror-mode-active {
+  /* Override primary green colors with red */
+  --primary-color: #ff0000;
+  --primary-dark: #8b0000;
+  --primary-light: #ff6b6b;
+  --primary-glow: rgba(255, 0, 0, 0.5);
+}
+
+/* Base elements */
+body.horror-mode-active .sheet h1,
+body.horror-mode-active .sheet h2,
+body.horror-mode-active .sheet h3 {
+  color: #ff0000 !important;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6) !important;
+}
+
+body.horror-mode-active #campaignName {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5) !important;
+  color: #ff0000 !important;
+  text-shadow: #ff0000 0px 0px 5px !important;
+}
+
+/* Tabs */
+body.horror-mode-active .tab {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .tab.active {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4) !important;
+  color: #ff0000 !important;
+}
+
+body.horror-mode-active .tab:hover {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Buttons */
+body.horror-mode-active .button,
+body.horror-mode-active button {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active .button:hover,
+body.horror-mode-active button:hover {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4) !important;
+  color: #ff0000 !important;
+}
+
+body.horror-mode-active .button.primary {
+  background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%) !important;
+  border-color: #ff0000 !important;
+  color: #ff0000 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Dashboard cards */
+body.horror-mode-active .dashboard-card {
+  border-color: #8b0000 !important;
+  box-shadow: 0 8px 30px rgba(139, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active .dashboard-card::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #8b0000 20%,
+    #ff0000 50%,
+    #8b0000 80%,
+    transparent 100%
+  ) !important;
+}
+
+body.horror-mode-active .dashboard-card:hover {
+  box-shadow: 0 12px 40px rgba(139, 0, 0, 0.5) !important;
+}
+
+body.horror-mode-active .card-header {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  color: #ff0000 !important;
+  border-bottom-color: #8b0000 !important;
+}
+
+/* Forms and inputs */
+body.horror-mode-active input[type="text"],
+body.horror-mode-active input[type="number"],
+body.horror-mode-active input[type="email"],
+body.horror-mode-active textarea,
+body.horror-mode-active select {
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active input[type="text"]:focus,
+body.horror-mode-active input[type="number"]:focus,
+body.horror-mode-active input[type="email"]:focus,
+body.horror-mode-active textarea:focus,
+body.horror-mode-active select:focus {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* Stat boxes */
+body.horror-mode-active .stat-box {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .stat-value {
+  color: #ff0000 !important;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6) !important;
+}
+
+body.horror-mode-active .stat-label {
+  color: #ff6b6b !important;
+}
+
+/* Party member cards */
+body.horror-mode-active .party-member-card {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .party-member-header {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  border-bottom-color: #8b0000 !important;
+}
+
+body.horror-mode-active .party-member-name {
+  color: #ff0000 !important;
+}
+
+/* NPC cards */
+body.horror-mode-active .npc-card {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .npc-header {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+}
+
+body.horror-mode-active .npc-name {
+  color: #ff0000 !important;
+}
+
+/* Combat tracker */
+body.horror-mode-active .combatant-card {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .combatant-card.active-turn {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.5) !important;
+}
+
+body.horror-mode-active .combatant-name {
+  color: #ff6b6b !important;
+}
+
+/* Progress bars */
+body.horror-mode-active .progress-bar {
+  background: rgba(139, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active .progress-fill {
+  background: linear-gradient(90deg, #8b0000 0%, #ff0000 100%) !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Icons and badges */
+body.horror-mode-active .badge {
+  background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%) !important;
+  border-color: #ff0000 !important;
+  color: #ff0000 !important;
+}
+
+/* Dividers */
+body.horror-mode-active hr,
+body.horror-mode-active .divider {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #8b0000,
+    transparent
+  ) !important;
+  box-shadow: 0 0 10px #8b0000 !important;
+}
+
+/* Tooltips and popovers */
+body.horror-mode-active .tooltip {
+  border-color: #8b0000 !important;
+  background: rgba(26, 0, 0, 0.95) !important;
+}
+
+/* Scrollbars */
+body.horror-mode-active ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%) !important;
+}
+
+body.horror-mode-active ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #a00000 0%, #6a0000 100%) !important;
+}
+
+/* Links */
+body.horror-mode-active a {
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active a:hover {
+  color: #ff0000 !important;
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Collapsible sections */
+body.horror-mode-active .collapsible-header {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .collapsible-header:hover {
+  background: rgba(139, 0, 0, 0.1) !important;
+}
+
+/* Tables */
+body.horror-mode-active table {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active th {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  color: #ff0000 !important;
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active td {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active tr:hover {
+  background: rgba(139, 0, 0, 0.1) !important;
+}
+
+/* Tool buttons */
+body.horror-mode-active .tool-button {
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active .tool-button:hover {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active .tool-button.active {
+  background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%) !important;
+  border-color: #ff0000 !important;
+  color: #ff0000 !important;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.6) !important;
+}
+
+/* Save/Load containers */
+body.horror-mode-active .save-load-header {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active .save-load-icon {
+  color: #ff6b6b !important;
+}
+/* Tab selection buttons container */
+body.horror-mode-active .tab-container,
+body.horror-mode-active .tabs-wrapper,
+body.horror-mode-active .tab-bar {
+  border-color: #8b0000 !important;
+}
+
+/* Toolbar elements */
+body.horror-mode-active .toolbar,
+body.horror-mode-active #toolbar {
+  border-color: #8b0000 !important;
+  background: rgba(26, 0, 0, 0.5) !important;
+}
+
+body.horror-mode-active .toolbar button,
+body.horror-mode-active .toolbar .tool-button {
+  color: #ff6b6b !important;
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .toolbar button:hover,
+body.horror-mode-active .toolbar .tool-button:hover {
+  color: #ff0000 !important;
+  border-color: #ff0000 !important;
+}
+
+body.horror-mode-active .toolbar .active {
+  color: #ff0000 !important;
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Container borders and sections */
+body.horror-mode-active .container,
+body.horror-mode-active .section,
+body.horror-mode-active .panel,
+body.horror-mode-active .box,
+body.horror-mode-active .card {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .content-section,
+body.horror-mode-active .form-section {
+  border-color: #8b0000 !important;
+}
+
+/* Database dropdowns */
+body.horror-mode-active .database-selector,
+body.horror-mode-active .database-dropdown,
+body.horror-mode-active select.database-select {
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+  background: rgba(26, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active .database-selector:hover,
+body.horror-mode-active .database-dropdown:hover,
+body.horror-mode-active select.database-select:hover {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active .database-selector:focus,
+body.horror-mode-active .database-dropdown:focus,
+body.horror-mode-active select.database-select:focus {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4) !important;
+}
+
+body.horror-mode-active .database-label,
+body.horror-mode-active .dropdown-label {
+  color: #ff6b6b !important;
+}
+
+/* Dropdown menus */
+body.horror-mode-active .dropdown-menu,
+body.horror-mode-active .dropdown-content {
+  border-color: #8b0000 !important;
+  background: rgba(26, 0, 0, 0.95) !important;
+}
+
+body.horror-mode-active .dropdown-item,
+body.horror-mode-active .dropdown-option {
+  color: #ff6b6b !important;
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .dropdown-item:hover,
+body.horror-mode-active .dropdown-option:hover {
+  background: rgba(139, 0, 0, 0.2) !important;
+  color: #ff0000 !important;
+}
+
+/* Additional specific selectors for various dropdowns */
+body.horror-mode-active select option {
+  background: #1a0000 !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active .custom-select,
+body.horror-mode-active .custom-dropdown {
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active .select-wrapper {
+  border-color: #8b0000 !important;
+}
+
+/* Header image border */
+body.horror-mode-active .header-image {
+  border-color: #8b0000 !important;
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.5) !important;
+}
+
+/* Game Master Toolset title line */
+body.horror-mode-active h1#pageTitle {
+  border-bottom-color: #8b0000 !important;
+}
+
+body.horror-mode-active h1::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #8b0000,
+    transparent
+  ) !important;
+}
+
+/* Tabs selection buttons border */
+body.horror-mode-active .tabs {
+  border-color: #8b0000 !important;
+}
+
+/* Container headers background highlight */
+body.horror-mode-active .collapsible-header,
+body.horror-mode-active .section-header,
+body.horror-mode-active .header {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active .collapsible-header h3,
+body.horror-mode-active .section-header h3,
+body.horror-mode-active .header h3 {
+  color: #ff0000 !important;
+}
+
+/* Save/Load section borders and text */
+body.horror-mode-active .save-load-container {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .save-load-section {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .save-load-container strong,
+body.horror-mode-active .save-load-section strong,
+body.horror-mode-active .save-load-container b,
+body.horror-mode-active .save-load-section b {
+  color: #ff0000 !important;
+}
+
+/* Individual tab buttons borders */
+body.horror-mode-active .tab {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .tab:not(.active) {
+  background: rgba(26, 0, 0, 0.3) !important;
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+}
+
+/* Container header text and backgrounds */
+body.horror-mode-active .party-section h3,
+body.horror-mode-active .combat-header h3,
+body.horror-mode-active .notes-header h3,
+body.horror-mode-active .session-header h3 {
+  color: #ff0000 !important;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6) !important;
+}
+
+body.horror-mode-active .party-section,
+body.horror-mode-active .combat-section,
+body.horror-mode-active .notes-section,
+body.horror-mode-active .session-section {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .party-section > div[style*="background"],
+body.horror-mode-active .combat-section > div[style*="background"],
+body.horror-mode-active .notes-section > div[style*="background"] {
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  border-bottom-color: #8b0000 !important;
+}
+
+/* Save/Load button borders */
+body.horror-mode-active .save-load-content button,
+body.horror-mode-active .save-load-options button,
+body.horror-mode-active #saveLoadButtons button {
+  border-color: #8b0000 !important;
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active .save-load-content button:hover,
+body.horror-mode-active .save-load-options button:hover,
+body.horror-mode-active #saveLoadButtons button:hover {
+  border-color: #ff0000 !important;
+  color: #ff0000 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* =================================================================
+   COMPREHENSIVE HORROR MODE OVERRIDES FOR INLINE STYLES
+   Override all green colors in dynamically generated HTML
+   ================================================================= */
+
+/* Override all inline green colors with red */
+body.horror-mode-active [style*="#4caf50"],
+body.horror-mode-active [style*="#4CAF50"],
+body.horror-mode-active [style*="#317e30"],
+body.horror-mode-active [style*="#2E7D32"],
+body.horror-mode-active [style*="#66bb6a"],
+body.horror-mode-active [style*="rgba(76, 175, 80"] {
+  /* This applies to elements with inline styles containing green */
+}
+
+/* Battle Map inline style overrides */
+body.horror-mode-active .battle-map-grid {
+  border-color: #8b0000 !important;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Details/Summary elements with inline green styles */
+body.horror-mode-active details[data-section] {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active details[data-section] > summary {
+  color: #ff0000 !important;
+  border-top-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active details[data-section] > div {
+  border-top-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Tool output containers */
+body.horror-mode-active div[style*="rgba(76, 175, 80, 0.1)"] {
+  background: rgba(26, 0, 0, 0.3) !important;
+  border-color: #8b0000 !important;
+}
+
+/* All divs with green border in inline styles */
+body.horror-mode-active div[style*="border: 1px solid #4caf50"],
+body.horror-mode-active div[style*="border: 1px solid #4CAF50"],
+body.horror-mode-active div[style*="border: 2px solid #4caf50"],
+body.horror-mode-active div[style*="border: 2px solid #4CAF50"],
+body.horror-mode-active div[style*="border: 3px solid #4caf50"],
+body.horror-mode-active div[style*="border: 3px solid #4CAF50"],
+body.horror-mode-active div[style*="border-left: 3px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* All buttons with green in inline styles */
+body.horror-mode-active button[style*="#4caf50"],
+body.horror-mode-active button[style*="#4CAF50"],
+body.horror-mode-active button[style*="rgba(76, 175, 80"] {
+  border-color: #8b0000 !important;
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  color: #ff6b6b !important;
+}
+
+/* All text colors with green in inline styles */
+body.horror-mode-active [style*="color: #4caf50"],
+body.horror-mode-active [style*="color: #4CAF50"],
+body.horror-mode-active [style*="color: #66bb6a"] {
+  color: #ff0000 !important;
+}
+
+/* Strong/Bold text with green color */
+body.horror-mode-active strong[style*="color: #4CAF50"],
+body.horror-mode-active strong[style*="color: #66bb6a"] {
+  color: #ff0000 !important;
+}
+
+/* Headers (h2, h3, h4) with green color in inline styles */
+body.horror-mode-active h2[style*="color: #4caf50"],
+body.horror-mode-active h2[style*="color: #4CAF50"],
+body.horror-mode-active h3[style*="color: #4caf50"],
+body.horror-mode-active h3[style*="color: #4CAF50"],
+body.horror-mode-active h4[style*="color: #4CAF50"] {
+  color: #ff0000 !important;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6) !important;
+}
+
+/* Range sliders (accent-color) */
+body.horror-mode-active input[type="range"][style*="accent-color: #4caf50"] {
+  accent-color: #ff0000 !important;
+}
+
+/* SVG elements with green stroke/fill */
+body.horror-mode-active svg path[stroke="#4CAF50"],
+body.horror-mode-active svg line[stroke="#4CAF50"] {
+  stroke: #ff0000 !important;
+}
+
+body.horror-mode-active svg circle[fill="#4CAF50"] {
+  fill: #ff0000 !important;
+}
+
+/* Cell hover effects with green */
+body.horror-mode-active [onmouseover*="rgba(76, 175, 80"] {
+  /* Override hover states handled by JavaScript */
+}
+
+/* Plot thread elements */
+body.horror-mode-active details[style*="border-left: 3px solid #4CAF50"] {
+  border-left-color: #8b0000 !important;
+}
+
+/* Textarea and input fields with green borders */
+body.horror-mode-active textarea[style*="border: 1px solid #4CAF50"],
+body.horror-mode-active input[style*="border: 1px solid #4CAF50"],
+body.horror-mode-active select[style*="border: 1px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* Span badges/tags with green */
+body.horror-mode-active span[style*="background: rgba(76, 175, 80, 0.2)"] {
+  background: rgba(26, 0, 0, 0.3) !important;
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+}
+
+/* Modal/popup styles */
+body.horror-mode-active
+  div[style*="border: 2px solid #4caf50"][style*="position: fixed"],
+body.horror-mode-active
+  div[style*="border: 2px solid #4CAF50"][style*="position: fixed"] {
+  border-color: #8b0000 !important;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Table headers and cells with green */
+body.horror-mode-active tr[style*="rgba(76, 175, 80"] {
+  background: rgba(26, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active th[style*="border-bottom: 2px solid #4CAF50"],
+body.horror-mode-active td[style*="border-bottom: 1px solid rgba(76, 175, 80"] {
+  border-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active td[style*="color: #4CAF50"],
+body.horror-mode-active td[style*="color: #66bb6a"] {
+  color: #ff0000 !important;
+}
+
+/* NPC card special colors */
+body.horror-mode-active .npc-card div[style*="color: #66bb6a"] {
+  color: #ff6b6b !important;
+}
+
+/* Landscape tile color override */
+body.horror-mode-active .tile[data-terrain="landscape"] {
+  /* Override handled by class-based styling */
+}
+
+/* =================================================================
+   COMPREHENSIVE HORROR MODE OVERRIDES FOR INLINE STYLES
+   Override all green colors in dynamically generated HTML
+   ================================================================= */
+
+/* Battle Map inline style overrides */
+body.horror-mode-active .battle-map-grid {
+  border-color: #8b0000 !important;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Details/Summary elements with inline green styles */
+body.horror-mode-active details[data-section] {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active details[data-section] > summary {
+  color: #ff0000 !important;
+  border-top-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active details[data-section] > div {
+  border-top-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Tool output containers */
+body.horror-mode-active div[style*="rgba(76, 175, 80, 0.1)"] {
+  background: rgba(26, 0, 0, 0.3) !important;
+  border-color: #8b0000 !important;
+}
+
+/* All divs with green border in inline styles */
+body.horror-mode-active div[style*="border: 1px solid #4caf50"],
+body.horror-mode-active div[style*="border: 1px solid #4CAF50"],
+body.horror-mode-active div[style*="border: 2px solid #4caf50"],
+body.horror-mode-active div[style*="border: 2px solid #4CAF50"],
+body.horror-mode-active div[style*="border: 3px solid #4caf50"],
+body.horror-mode-active div[style*="border: 3px solid #4CAF50"],
+body.horror-mode-active div[style*="border-left: 3px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* All buttons with green in inline styles */
+body.horror-mode-active button[style*="#4caf50"],
+body.horror-mode-active button[style*="#4CAF50"],
+body.horror-mode-active button[style*="rgba(76, 175, 80"] {
+  border-color: #8b0000 !important;
+  background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%) !important;
+  color: #ff6b6b !important;
+}
+
+/* All text colors with green in inline styles */
+body.horror-mode-active [style*="color: #4caf50"],
+body.horror-mode-active [style*="color: #4CAF50"],
+body.horror-mode-active [style*="color: #66bb6a"] {
+  color: #ff0000 !important;
+}
+
+/* Strong/Bold text with green color */
+body.horror-mode-active strong[style*="color: #4CAF50"],
+body.horror-mode-active strong[style*="color: #66bb6a"] {
+  color: #ff0000 !important;
+}
+
+/* Headers (h2, h3, h4) with green color in inline styles */
+body.horror-mode-active h2[style*="color: #4caf50"],
+body.horror-mode-active h2[style*="color: #4CAF50"],
+body.horror-mode-active h3[style*="color: #4caf50"],
+body.horror-mode-active h3[style*="color: #4CAF50"],
+body.horror-mode-active h4[style*="color: #4CAF50"] {
+  color: #ff0000 !important;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6) !important;
+}
+
+/* Range sliders (accent-color) */
+body.horror-mode-active input[type="range"][style*="accent-color: #4caf50"] {
+  accent-color: #ff0000 !important;
+}
+
+/* SVG elements with green stroke/fill */
+body.horror-mode-active svg path[stroke="#4CAF50"],
+body.horror-mode-active svg line[stroke="#4CAF50"] {
+  stroke: #ff0000 !important;
+}
+
+body.horror-mode-active svg circle[fill="#4CAF50"] {
+  fill: #ff0000 !important;
+}
+
+/* Plot thread elements */
+body.horror-mode-active details[style*="border-left: 3px solid #4CAF50"] {
+  border-left-color: #8b0000 !important;
+}
+
+/* Textarea and input fields with green borders */
+body.horror-mode-active textarea[style*="border: 1px solid #4CAF50"],
+body.horror-mode-active input[style*="border: 1px solid #4CAF50"],
+body.horror-mode-active select[style*="border: 1px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* Span badges/tags with green */
+body.horror-mode-active span[style*="background: rgba(76, 175, 80, 0.2)"] {
+  background: rgba(26, 0, 0, 0.3) !important;
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+}
+
+/* Modal/popup styles */
+body.horror-mode-active
+  div[style*="border: 2px solid #4caf50"][style*="position: fixed"],
+body.horror-mode-active
+  div[style*="border: 2px solid #4CAF50"][style*="position: fixed"] {
+  border-color: #8b0000 !important;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Table headers and cells with green */
+body.horror-mode-active tr[style*="rgba(76, 175, 80"] {
+  background: rgba(26, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active th[style*="border-bottom: 2px solid #4CAF50"],
+body.horror-mode-active td[style*="border-bottom: 1px solid rgba(76, 175, 80"] {
+  border-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active td[style*="color: #4CAF50"],
+body.horror-mode-active td[style*="color: #66bb6a"] {
+  color: #ff0000 !important;
+}
+
+/* NPC card special colors */
+body.horror-mode-active .npc-card div[style*="color: #66bb6a"] {
+  color: #ff6b6b !important;
+}
+
+/* Additional background overrides */
+body.horror-mode-active div[style*="background: rgba(76, 175, 80, 0.05)"],
+body.horror-mode-active div[style*="background: rgba(76, 175, 80, 0.2)"],
+body.horror-mode-active div[style*="background: rgba(76, 175, 80, 0.3)"] {
+  background: rgba(26, 0, 0, 0.3) !important;
+}
+
+/* Border-top overrides */
+body.horror-mode-active [style*="border-top: 1px solid rgba(76, 175, 80"],
+body.horror-mode-active [style*="border-top: 1px solid #4caf50"],
+body.horror-mode-active [style*="border-top: 1px solid #4CAF50"] {
+  border-top-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Box shadow overrides */
+body.horror-mode-active [style*="box-shadow: 0 0 20px rgba(76, 175, 80"],
+body.horror-mode-active [style*="box-shadow: 0 0 30px rgba(76, 175, 80"],
+body.horror-mode-active [style*="box-shadow: 0 4px 20px rgba(76, 175, 80"] {
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.4) !important;
+}
+/* CSS Variable overrides for Horror Mode */
+body.horror-mode-active {
+  --color-primary: #8b0000 !important;
+}
+
+/* Select option checked state */
+body.horror-mode-active select option:checked {
+  background: #8b0000 !important;
+}
+
+/* Header image border and shadow */
+body.horror-mode-active .header-image {
+  border-color: #8b0000 !important;
+  box-shadow: 0 4px 20px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* Landscape terrain tile override */
+body.horror-mode-active .tile[data-terrain="landscape"] {
+  background-color: #8b0000 !important;
+  border-color: #8b0000 !important;
+}
+
+/* Cell border colors in grid */
+body.horror-mode-active .cell,
+body.horror-mode-active .grid-cell {
+  border-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+/* PC token color override */
+body.horror-mode-active .token[data-type="PC"],
+body.horror-mode-active [data-combatant-type="PC"] {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Emoji containers with green hover */
+body.horror-mode-active
+  [style*="font-size: 24px"][style*="border: 2px solid #4caf50"] {
+  border-color: #8b0000 !important;
+}
+/* Additional Horror Mode overrides for HTML inline styles */
+
+/* Input fields with green styling */
+body.horror-mode-active input[style*="border: 1px solid #4caf50"],
+body.horror-mode-active input[style*="border: 1px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active input[style*="color: #4caf50"],
+body.horror-mode-active input[style*="color: #4CAF50"] {
+  color: #ff0000 !important;
+}
+
+body.horror-mode-active input[style*="text-shadow: #4caf50"],
+body.horror-mode-active input[style*="text-shadow: #4CAF50"] {
+  text-shadow: #ff0000 0px 0px 5px !important;
+}
+
+body.horror-mode-active input[style*="box-shadow: 0 0 5px rgba(76, 175, 80"] {
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Label elements with green color */
+body.horror-mode-active label[style*="color: #66bb6a"],
+body.horror-mode-active label[style*="color: #4caf50"],
+body.horror-mode-active label[style*="color: #4CAF50"] {
+  color: #ff0000 !important;
+}
+
+/* Details/summary elements */
+body.horror-mode-active details[style*="border: 2px solid #66bb6a"] {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active details[style*="border: 1px solid #4caf50"],
+body.horror-mode-active details[style*="border: 1px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* H3 and H4 headers with green color in inline styles */
+body.horror-mode-active h3[style*="color: #4caf50"],
+body.horror-mode-active h3[style*="color: #4CAF50"],
+body.horror-mode-active h4[style*="color: #4caf50"],
+body.horror-mode-active h4[style*="color: #4CAF50"] {
+  color: #ff0000 !important;
+}
+
+/* Select dropdowns with green text */
+body.horror-mode-active select[style*="color: #4caf50"],
+body.horror-mode-active select[style*="color: #4CAF50"] {
+  color: #ff0000 !important;
+}
+
+/* Buttons with green borders */
+body.horror-mode-active button[style*="border: 1px solid #4caf50"],
+body.horror-mode-active button[style*="border: 1px solid #4CAF50"],
+body.horror-mode-active button[style*="border: 2px solid #4caf50"],
+body.horror-mode-active button[style*="border: 2px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* Generator cards and dashboard cards */
+body.horror-mode-active .generator-card[style*="border: 1px solid #4caf50"],
+body.horror-mode-active .dashboard-card[style*="border: 1px solid #4caf50"] {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .generator-card h3[style*="color: #4caf50"],
+body.horror-mode-active .dashboard-card h3[style*="color: #4caf50"] {
+  color: #ff0000 !important;
+}
+
+/* Location form background */
+body.horror-mode-active
+  div[style*="background: rgba(76, 175, 80, 0.1); border: 1px solid #4caf50"] {
+  background: rgba(26, 0, 0, 0.3) !important;
+  border-color: #8b0000 !important;
+}
+
+/* Campaign name input - special case with multiple green properties */
+body.horror-mode-active #campaignName {
+  border-color: #8b0000 !important;
+  color: #ff0000 !important;
+  text-shadow: #ff0000 0px 0px 5px !important;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Additional comprehensive overrides for all remaining inline green styles */
+
+/* Textarea elements with green borders */
+body.horror-mode-active textarea[style*="border: 1px solid #66bb6a"],
+body.horror-mode-active textarea[style*="border: 1px solid #4caf50"],
+body.horror-mode-active textarea[style*="border: 1px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* Div elements with green borders (various widths) */
+body.horror-mode-active div[style*="border: 1px solid #66bb6a"],
+body.horror-mode-active div[style*="border: 2px solid #66bb6a"],
+body.horror-mode-active div[style*="border: 1px solid #4caf50"],
+body.horror-mode-active div[style*="border: 1px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* Div elements with green backgrounds */
+body.horror-mode-active div[style*="background: rgba(76, 175, 80, 0.2)"] {
+  background: rgba(139, 0, 0, 0.2) !important;
+}
+
+/* H3 headers with green color - more specific patterns */
+body.horror-mode-active h3[style*="color: #4caf50"],
+body.horror-mode-active h3[style*="color: #66bb6a"] {
+  color: #ff0000 !important;
+}
+
+/* H4 headers with green color */
+body.horror-mode-active h4[style*="color: #4caf50"],
+body.horror-mode-active h4[style*="color: #66bb6a"] {
+  color: #ff0000 !important;
+}
+
+/* Buttons with green backgrounds and borders */
+body.horror-mode-active button[style*="background: rgba(76, 175, 80, 0.2)"] {
+  background: rgba(139, 0, 0, 0.2) !important;
+}
+
+body.horror-mode-active button[style*="color: #66bb6a"],
+body.horror-mode-active button[style*="color: #81c784"] {
+  color: #ff6b6b !important;
+}
+
+/* Select elements with green borders */
+body.horror-mode-active select[style*="border: 1px solid #66bb6a"],
+body.horror-mode-active select[style*="border: 1px solid #4caf50"],
+body.horror-mode-active select[style*="border: 1px solid #4CAF50"] {
+  border-color: #8b0000 !important;
+}
+
+/* Additional specific overrides for generator cards */
+body.horror-mode-active .generator-card[style*="border: 1px solid #4caf50"] h3,
+body.horror-mode-active .dashboard-card[style*="border: 1px solid #4caf50"] h3 {
+  color: #ff0000 !important;
+}
+
+/* Override any remaining inline green colors in style attributes */
+body.horror-mode-active [style*="#66bb6a"] {
+  border-color: #8b0000 !important;
+  color: #ff0000 !important;
+}
+
+body.horror-mode-active [style*="#4caf50"],
+body.horror-mode-active [style*="#4CAF50"] {
+  border-color: #8b0000 !important;
+  color: #ff0000 !important;
+}
+
+body.horror-mode-active [style*="#81c784"] {
+  color: #ff6b6b !important;
+}
+
+body.horror-mode-active [style*="rgba(76, 175, 80"] {
+  background: rgba(139, 0, 0, 0.2) !important;
+  border-color: #8b0000 !important;
+}
+
+/* Specific overrides for story notes buttons */
+body.horror-mode-active
+  button[style*="border: 1px solid #4caf50"][style*="color: #66bb6a"] {
+  border-color: #8b0000 !important;
+  color: #ff6b6b !important;
+  background: rgba(139, 0, 0, 0.2) !important;
+}
+
+/* Horror Mode Toggle Container - Below Tab Navigation */
+.horror-mode-toggle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 2px 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
+}
+
+.horror-mode-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 24px;
+  min-height: 48px;
+  width: 250px;
+  box-sizing: border-box;
+  background: linear-gradient(
+    135deg,
+    rgba(20, 40, 20, 0.4) 0%,
+    rgba(10, 30, 10, 0.6) 100%
+  );
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  color: #c8e6c9;
+  font-family: "Libre Baskerville", serif;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.horror-mode-toggle-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 50, 30, 0.5) 0%,
+    rgba(20, 40, 20, 0.7) 100%
+  );
+  border-color: #66bb6a;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  transform: translateY(-1px);
+}
+
+.horror-mode-toggle-btn.active {
+  background: linear-gradient(135deg, #8b0000 0%, #5a0000 100%);
+  border: 2px solid #ff0000;
+  color: #ff6b6b;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+  animation: horrorTogglePulse 2s ease-in-out infinite;
+}
+
+.horror-mode-toggle-btn.active:hover {
+  background: linear-gradient(135deg, #a00000 0%, #6a0000 100%);
+  border-color: #ff3333;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.7), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes horrorTogglePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.horror-mode-toggle-btn .toggle-icon {
+  font-size: 1.3em;
+  transition: transform 0.3s ease;
+}
+
+.horror-mode-toggle-btn.active .toggle-icon {
+  animation: horrorIconShake 1s ease-in-out infinite;
+}
+
+@keyframes horrorIconShake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-8deg);
+  }
+  75% {
+    transform: rotate(8deg);
+  }
+}
+
+.horror-mode-toggle-btn .toggle-text {
+  letter-spacing: 1px;
+}
+
+/* ==================== HORROR MODE OVERRIDES FOR SECTIONS ==================== */
+
+body.horror-mode-active .section {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1a0000 100%);
+  border-color: #8b0000;
+  box-shadow: 0 8px 30px rgba(139, 0, 0, 0.3);
+}
+
+body.horror-mode-active .section::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #8b0000 20%,
+    #ff0000 50%,
+    #8b0000 80%,
+    transparent 100%
+  );
+}
+
+body.horror-mode-active .section > h2:first-child {
+  background: linear-gradient(135deg, #2a2a2a 0%, #2a1a1a 100%);
+  color: #ff0000;
+  border-bottom-color: #8b0000;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+body.horror-mode-active #reference .section > h2 {
+  color: #ff0000;
+  text-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+  border-bottom-color: rgba(255, 0, 0, 0.3);
+}
+
+/* ==================== HORROR MODE OVERRIDES FOR CARD GLOWS ==================== */
+
+/* Party member cards - glows and shimmer */
+body.horror-mode-active .party-member-card {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1a0000 100%) !important;
+  border-color: #8b0000 !important;
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2) !important;
+}
+
+body.horror-mode-active .party-member-card::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #8b0000 20%,
+    #ff0000 50%,
+    #8b0000 80%,
+    transparent 100%
+  ) !important;
+}
+
+body.horror-mode-active .party-member-card:hover {
+  border-color: #ff0000 !important;
+  box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4) !important;
+}
+
+body.horror-mode-active .party-member-card input,
+body.horror-mode-active .party-member-card select,
+body.horror-mode-active .party-member-card textarea {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .party-member-card input:focus,
+body.horror-mode-active .party-member-card select:focus,
+body.horror-mode-active .party-member-card textarea:focus {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* NPC cards - glows and shimmer */
+body.horror-mode-active .npc-card {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1a0000 100%) !important;
+  border-color: #8b0000 !important;
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2) !important;
+}
+
+body.horror-mode-active .npc-card::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #8b0000 20%,
+    #ff0000 50%,
+    #8b0000 80%,
+    transparent 100%
+  ) !important;
+}
+
+body.horror-mode-active .npc-card:hover {
+  border-color: #ff0000 !important;
+  box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4) !important;
+}
+
+body.horror-mode-active .npc-card input,
+body.horror-mode-active .npc-card select,
+body.horror-mode-active .npc-card textarea {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .npc-card input:focus,
+body.horror-mode-active .npc-card select:focus,
+body.horror-mode-active .npc-card textarea:focus {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* Generator cards - glows and shimmer */
+body.horror-mode-active .generator-card {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1a0000 100%) !important;
+  border-color: #8b0000 !important;
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2) !important;
+}
+
+body.horror-mode-active .generator-card::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #8b0000 20%,
+    #ff0000 50%,
+    #8b0000 80%,
+    transparent 100%
+  ) !important;
+}
+
+body.horror-mode-active .generator-card:hover {
+  border-color: #ff0000 !important;
+  box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4) !important;
+}
+
+body.horror-mode-active .generator-card h3 {
+  background: linear-gradient(135deg, #2a2a2a 0%, #2a1a1a 100%) !important;
+  color: #ff0000 !important;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+  border-bottom-color: #8b0000 !important;
+}
+
+body.horror-mode-active .generator-card input {
+  border-color: #8b0000 !important;
+}
+
+body.horror-mode-active .generator-card input:focus {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* Dashboard cards - enhanced glows */
+body.horror-mode-active .dashboard-card {
+  background: linear-gradient(135deg, #1a1a1a 0%, #1a0000 100%) !important;
+  border-color: #8b0000 !important;
+  box-shadow: 0 8px 30px rgba(139, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active .dashboard-card::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #8b0000 20%,
+    #ff0000 50%,
+    #8b0000 80%,
+    transparent 100%
+  ) !important;
+}
+
+body.horror-mode-active .dashboard-card:hover {
+  border-color: #ff0000 !important;
+  box-shadow: 0 12px 40px rgba(139, 0, 0, 0.5) !important;
+}
+
+/* Artefacts, Leitner, Bestiary, Location cards (details elements with inline styles) */
+body.horror-mode-active details[style*="border: 1px solid #4CAF50"],
+body.horror-mode-active details[style*="border: 1px solid #4caf50"] {
+  border-color: #8b0000 !important;
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.3) !important;
+}
+
+body.horror-mode-active details[style*="border: 1px solid #4CAF50"] summary,
+body.horror-mode-active details[style*="border: 1px solid #4caf50"] summary {
+  color: #ff0000 !important;
+}
+
+body.horror-mode-active details[style*="border: 1px solid #4CAF50"]:hover,
+body.horror-mode-active details[style*="border: 1px solid #4caf50"]:hover {
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4) !important;
+}
+
+/* Details elements border-top overrides */
+body.horror-mode-active
+  details
+  div[style*="border-top: 1px solid rgba(76, 175, 80"] {
+  border-top-color: rgba(139, 0, 0, 0.3) !important;
+}
+
+/* ================================
+   TIME TRACKER STYLES
+   ================================ */
+
+.time-tracker-container {
+  display: flex;
+  align-items: center;
+}
+
+.time-tracker-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 20px;
+  min-height: 48px;
+  width: 250px;
+  box-sizing: border-box;
+  background: linear-gradient(
+    135deg,
+    rgba(20, 40, 20, 0.4) 0%,
+    rgba(10, 30, 10, 0.6) 100%
+  );
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  color: #c8e6c9;
+  font-family: "Libre Baskerville", serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.time-tracker-display:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 50, 30, 0.5) 0%,
+    rgba(20, 40, 20, 0.7) 100%
+  );
+  border-color: #66bb6a;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  transform: translateY(-1px);
+}
+
+.time-icon {
+  font-size: 1.5em;
+  filter: drop-shadow(0 0 4px rgba(76, 175, 80, 0.5));
+}
+
+.time-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  line-height: 1.1;
+}
+
+.time-date {
+  font-size: 0.75em;
+  font-weight: 500;
+  opacity: 0.75;
+  order: 2;
+}
+
+.time-clock {
+  font-size: 1.1em;
+  font-weight: 700;
+  opacity: 1;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+  order: 1;
+}
+
+/* Time Tracker Modal */
+.time-tracker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.time-tracker-panel {
+  background: linear-gradient(135deg, #1a2e1a 0%, #16211e 100%);
+  border: 2px solid #4caf50;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  min-width: 400px;
+  max-width: 90%;
+}
+
+.time-tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 2px solid #4caf50;
+  border-radius: 10px 10px 0 0;
+}
+
+.time-tracker-header h3 {
+  color: #c8e6c9;
+  font-family: "Libre Baskerville", serif;
+  font-size: 1.3em;
+  margin: 0;
+}
+
+.time-tracker-header .close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-tracker-header .close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.time-tracker-body {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  padding: 20px;
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.time-input-group label {
+  color: #a5d6a7;
+  font-family: "Libre Baskerville", serif;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.time-input-group input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  color: #c8e6c9;
+  padding: 8px;
+  font-size: 1em;
+  font-family: monospace;
+  transition: all 0.2s ease;
+}
+
+.time-input-group input:focus {
+  outline: none;
+  border-color: #66bb6a;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+}
+
+.time-tracker-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 20px 20px 20px;
+  justify-content: center;
+}
+
+.time-btn {
+  padding: 10px 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.3) 0%,
+    rgba(56, 142, 60, 0.5) 100%
+  );
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  color: #c8e6c9;
+  font-family: "Libre Baskerville", serif;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.5) 0%,
+    rgba(56, 142, 60, 0.7) 100%
+  );
+  border-color: #66bb6a;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
+/* ================================
+   TIME TRACKER HORROR MODE THEME
+   ================================ */
+
+body.horror-mode-active .time-tracker-display {
+  background: linear-gradient(
+    135deg,
+    rgba(60, 10, 10, 0.4) 0%,
+    rgba(40, 0, 0, 0.6) 100%
+  );
+  border-color: #8b0000;
+  color: #ffcccc;
+}
+
+body.horror-mode-active .time-tracker-display:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(80, 15, 15, 0.5) 0%,
+    rgba(50, 5, 5, 0.7) 100%
+  );
+  border-color: #b00000;
+  color: #ffd4d4;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.4);
+}
+
+body.horror-mode-active .time-icon {
+  filter: drop-shadow(0 0 6px rgba(139, 0, 0, 0.6));
+}
+
+body.horror-mode-active .time-tracker-panel {
+  background: linear-gradient(135deg, #1a0a0a 0%, #2e0e0e 100%);
+  border-color: #8b0000;
+  box-shadow: 0 8px 32px rgba(139, 0, 0, 0.5);
+}
+
+body.horror-mode-active .time-tracker-header {
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom-color: #8b0000;
+}
+
+body.horror-mode-active .time-tracker-header h3 {
+  color: #ffcccc;
+}
+
+body.horror-mode-active .time-input-group label {
+  color: #d4a4a4;
+}
+
+body.horror-mode-active .time-input-group input {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: #8b0000;
+  color: #ffcccc;
+}
+
+body.horror-mode-active .time-input-group input:focus {
+  border-color: #b00000;
+  box-shadow: 0 0 8px rgba(139, 0, 0, 0.5);
+}
+
+body.horror-mode-active .time-btn {
+  background: linear-gradient(
+    135deg,
+    rgba(139, 0, 0, 0.3) 0%,
+    rgba(90, 0, 0, 0.5) 100%
+  );
+  border-color: #8b0000;
+  color: #ffcccc;
+}
+
+body.horror-mode-active .time-btn:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(139, 0, 0, 0.5) 0%,
+    rgba(90, 0, 0, 0.7) 100%
+  );
+  border-color: #b00000;
+  color: #ffd4d4;
+  box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4);
 }

@@ -2,6 +2,34 @@
 // All functions are exposed to the window object for inline event handlers
 // This executes immediately when the script loads (synchronously)
 
+// ==================== HORROR MODE HELPERS ====================
+// Helper function to get theme-appropriate colors
+window.getThemeColor = function (type = "primary") {
+  const isHorrorMode = document.body.classList.contains("horror-mode-active");
+
+  const colors = {
+    normal: {
+      primary: "#4caf50",
+      primaryDark: "#317e30",
+      primaryLight: "#66bb6a",
+      primaryRgba: (alpha) => `rgba(76, 175, 80, ${alpha})`,
+      primaryDark2: "#2E7D32",
+      primaryDark3: "#2a6528",
+    },
+    horror: {
+      primary: "#ff0000",
+      primaryDark: "#8b0000",
+      primaryLight: "#ff6b6b",
+      primaryRgba: (alpha) => `rgba(255, 0, 0, ${alpha})`,
+      primaryDark2: "#8b0000",
+      primaryDark3: "#6b0000",
+    },
+  };
+
+  const theme = isHorrorMode ? colors.horror : colors.normal;
+  return theme[type] || theme.primary;
+};
+
 // ==================== NPC FUNCTIONS ====================
 if (typeof addNPC !== "undefined") window.addNPC = addNPC;
 if (typeof removeNPC !== "undefined") window.removeNPC = removeNPC;
@@ -27,61 +55,102 @@ if (typeof downloadNPCsTemplate !== "undefined")
   window.downloadNPCsTemplate = downloadNPCsTemplate;
 
 // ==================== PARTY FUNCTIONS ====================
-window.addPartyMember = addPartyMember;
-window.importCharacterSheet = importCharacterSheet;
-window.addImportedCharacter = addImportedCharacter;
-window.updateCharacterSheet = updateCharacterSheet;
-window.toggleCharacterDetails = toggleCharacterDetails;
-window.removePartyMember = removePartyMember;
-window.updatePartyMember = updatePartyMember;
-window.renderPartyList = renderPartyList;
-window.savePartyData = savePartyData;
-window.loadPartyData = loadPartyData;
-window.updateDashboardPartyStats = updateDashboardPartyStats;
+if (typeof addPartyMember !== "undefined")
+  window.addPartyMember = addPartyMember;
+if (typeof importCharacterSheet !== "undefined")
+  window.importCharacterSheet = importCharacterSheet;
+if (typeof addImportedCharacter !== "undefined")
+  window.addImportedCharacter = addImportedCharacter;
+if (typeof updateCharacterSheet !== "undefined")
+  window.updateCharacterSheet = updateCharacterSheet;
+if (typeof toggleCharacterDetails !== "undefined")
+  window.toggleCharacterDetails = toggleCharacterDetails;
+if (typeof removePartyMember !== "undefined")
+  window.removePartyMember = removePartyMember;
+if (typeof updatePartyMember !== "undefined")
+  window.updatePartyMember = updatePartyMember;
+if (typeof renderPartyList !== "undefined")
+  window.renderPartyList = renderPartyList;
+if (typeof savePartyData !== "undefined") window.savePartyData = savePartyData;
+if (typeof loadPartyData !== "undefined") window.loadPartyData = loadPartyData;
+if (typeof updateDashboardPartyStats !== "undefined")
+  window.updateDashboardPartyStats = updateDashboardPartyStats;
 
 // ==================== COMBAT FUNCTIONS ====================
-window.addPartyMemberToCombat = addPartyMemberToCombat;
-window.addAllPartyToCombat = addAllPartyToCombat;
-window.addNPCToCombatTracker = addNPCToCombatTracker;
-window.addBestiaryToCombat = addBestiaryToCombat;
-window.removeCombatant = removeCombatant;
-window.quickAddCombatant = quickAddCombatant;
-window.updateInitiative = updateInitiative;
-window.randomizeInitiative = randomizeInitiative;
-window.randomizeAllNPCInitiative = randomizeAllNPCInitiative;
-window.confirmInitiativeOrder = confirmInitiativeOrder;
-window.nextTurn = nextTurn;
-window.endCombat = endCombat;
-window.updateCombatantField = updateCombatantField;
-window.toggleCombatantExpanded = toggleCombatantExpanded;
-window.renderCombatTracker = renderCombatTracker;
-window.initializeCombatTracker = initializeCombatTracker;
-window.navigateToPartyTab = navigateToPartyTab;
-window.navigateToBestiaryTab = navigateToBestiaryTab;
-window.navigateToNPCsTab = navigateToNPCsTab;
+if (typeof addPartyMemberToCombat !== "undefined")
+  window.addPartyMemberToCombat = addPartyMemberToCombat;
+if (typeof addAllPartyToCombat !== "undefined")
+  window.addAllPartyToCombat = addAllPartyToCombat;
+if (typeof addNPCToCombatTracker !== "undefined")
+  window.addNPCToCombatTracker = addNPCToCombatTracker;
+if (typeof addBestiaryToCombat !== "undefined")
+  window.addBestiaryToCombat = addBestiaryToCombat;
+if (typeof removeCombatant !== "undefined")
+  window.removeCombatant = removeCombatant;
+if (typeof quickAddCombatant !== "undefined")
+  window.quickAddCombatant = quickAddCombatant;
+if (typeof updateInitiative !== "undefined")
+  window.updateInitiative = updateInitiative;
+if (typeof randomizeInitiative !== "undefined")
+  window.randomizeInitiative = randomizeInitiative;
+if (typeof randomizeAllNPCInitiative !== "undefined")
+  window.randomizeAllNPCInitiative = randomizeAllNPCInitiative;
+if (typeof confirmInitiativeOrder !== "undefined")
+  window.confirmInitiativeOrder = confirmInitiativeOrder;
+if (typeof nextTurn !== "undefined") window.nextTurn = nextTurn;
+if (typeof endCombat !== "undefined") window.endCombat = endCombat;
+if (typeof updateCombatantField !== "undefined")
+  window.updateCombatantField = updateCombatantField;
+if (typeof toggleCombatantExpanded !== "undefined")
+  window.toggleCombatantExpanded = toggleCombatantExpanded;
+if (typeof renderCombatTracker !== "undefined")
+  window.renderCombatTracker = renderCombatTracker;
+if (typeof initializeCombatTracker !== "undefined")
+  window.initializeCombatTracker = initializeCombatTracker;
+if (typeof navigateToPartyTab !== "undefined")
+  window.navigateToPartyTab = navigateToPartyTab;
+if (typeof navigateToBestiaryTab !== "undefined")
+  window.navigateToBestiaryTab = navigateToBestiaryTab;
+if (typeof navigateToNPCsTab !== "undefined")
+  window.navigateToNPCsTab = navigateToNPCsTab;
 
 // ==================== DASHBOARD FUNCTIONS ====================
-window.switchToTab = switchToTab;
-window.initializeDashboard = initializeDashboard;
-window.updatePartyStats = updatePartyStats;
-window.addToRollLog = addToRollLog;
-window.updateRollLogDisplay = updateRollLogDisplay;
-window.clearRollLog = clearRollLog;
-window.rollGroupInitiative = rollGroupInitiative;
-window.saveSessionNotes = saveSessionNotes;
-window.loadSessionNotes = loadSessionNotes;
-window.viewPastSessions = viewPastSessions;
-window.updateSessionHistoryDisplay = updateSessionHistoryDisplay;
-window.loadSession = loadSession;
-window.editSessionFromHistory = editSessionFromHistory;
-window.deleteSessionFromHistory = deleteSessionFromHistory;
-window.toggleSessionDetails = toggleSessionDetails;
-window.sortSessionsBy = sortSessionsBy;
-window.filterSessions = filterSessions;
-window.clearSessionFilters = clearSessionFilters;
+if (typeof switchToTab !== "undefined") window.switchToTab = switchToTab;
+if (typeof initializeDashboard !== "undefined")
+  window.initializeDashboard = initializeDashboard;
+if (typeof updatePartyStats !== "undefined")
+  window.updatePartyStats = updatePartyStats;
+if (typeof addToRollLog !== "undefined") window.addToRollLog = addToRollLog;
+if (typeof updateRollLogDisplay !== "undefined")
+  window.updateRollLogDisplay = updateRollLogDisplay;
+if (typeof clearRollLog !== "undefined") window.clearRollLog = clearRollLog;
+if (typeof rollGroupInitiative !== "undefined")
+  window.rollGroupInitiative = rollGroupInitiative;
+if (typeof saveSessionNotes !== "undefined")
+  window.saveSessionNotes = saveSessionNotes;
+if (typeof loadSessionNotes !== "undefined")
+  window.loadSessionNotes = loadSessionNotes;
+if (typeof viewPastSessions !== "undefined")
+  window.viewPastSessions = viewPastSessions;
+if (typeof updateSessionHistoryDisplay !== "undefined")
+  window.updateSessionHistoryDisplay = updateSessionHistoryDisplay;
+if (typeof loadSession !== "undefined") window.loadSession = loadSession;
+if (typeof editSessionFromHistory !== "undefined")
+  window.editSessionFromHistory = editSessionFromHistory;
+if (typeof deleteSessionFromHistory !== "undefined")
+  window.deleteSessionFromHistory = deleteSessionFromHistory;
+if (typeof toggleSessionDetails !== "undefined")
+  window.toggleSessionDetails = toggleSessionDetails;
+if (typeof sortSessionsBy !== "undefined")
+  window.sortSessionsBy = sortSessionsBy;
+if (typeof filterSessions !== "undefined")
+  window.filterSessions = filterSessions;
+if (typeof clearSessionFilters !== "undefined")
+  window.clearSessionFilters = clearSessionFilters;
 
 // ==================== REFERENCE FUNCTIONS ====================
-window.initializeReference = initializeReference;
+if (typeof initializeReference !== "undefined")
+  window.initializeReference = initializeReference;
 if (typeof populateBestiary !== "undefined")
   window.populateBestiary = populateBestiary;
 if (typeof filterBestiary !== "undefined")

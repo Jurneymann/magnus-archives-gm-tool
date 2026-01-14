@@ -1,6 +1,16 @@
 /* Magnus Archives GM Tool - Main Styles */
 /* This file contains unique styles not covered by other modular CSS files */
 
+/* ==================== COLLAPSIBLE SECTIONS ==================== */
+
+details[open] summary .details-arrow {
+  transform: rotate(90deg);
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
 /* ==================== ENTITY POPUP MODAL ==================== */
 
 .entity-modal {
@@ -25,6 +35,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 10px 50px rgba(49, 126, 48, 0.5);
+  transition: border-color 1.2s ease, box-shadow 1.2s ease;
 }
 
 .entity-modal-header {
@@ -34,12 +45,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: background 1.2s ease, border-bottom-color 1.2s ease;
 }
 
 .entity-modal-header h2 {
   margin: 0;
   color: #4caf50;
   font-size: 1.5em;
+  transition: color 1.2s ease;
 }
 
 .entity-close {
@@ -99,6 +112,7 @@ section {
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
+  transition: border-color 1.2s ease;
 }
 
 label {
@@ -118,7 +132,7 @@ textarea {
   border-radius: 4px;
   color: #fff;
   font-size: 1em;
-  transition: all 0.2s ease;
+  transition: all 1.2s ease;
   font-family: inherit;
 }
 
@@ -138,6 +152,7 @@ textarea:focus {
   border-radius: 6px;
   padding: 15px;
   margin-bottom: 20px;
+  transition: border-color 1.2s ease;
 }
 
 .text-section h3 {

@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Battle Map - Player View</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #0a0a0a;
+        color: #e0e0e0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      #playerViewHeader {
+        background: linear-gradient(135deg, #1a1a1a 0%, #0f1f0f 100%);
+        border-bottom: 2px solid #4caf50;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+      }
+
+      #playerViewHeader h1 {
+        color: #4caf50;
+        font-size: 1.3em;
+        margin: 0;
+      }
+
+      #playerViewControls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .player-control-button {
+        padding: 6px 12px;
+        background: rgba(76, 175, 80, 0.2);
+        border: 1px solid #4caf50;
+        border-radius: 4px;
+        color: #4caf50;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: all 0.2s;
+      }
+
+      .player-control-button:hover {
+        background: rgba(76, 175, 80, 0.3);
+      }
+
+      .player-control-button.active {
+        background: rgba(76, 175, 80, 0.4);
+        border-color: #66bb6a;
+      }
+
+      #battleMapPlayerContainer {
+        flex: 1;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 20px;
+        overflow: auto;
+        position: relative;
+      }
+
+      #battleMapPlayerCanvas {
+        border: 2px solid #4caf50;
+        border-radius: 8px;
+        box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+        image-rendering: pixelated;
+        margin: auto;
+      }
+        cursor: default;
+      }
+
+      .zoom-controls {
+        display: flex;
+        gap: 5px;
+      }
+
+      .connection-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85em;
+        color: #888;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #f44336;
+        animation: pulse 2s infinite;
+      }
+
+      .status-dot.connected {
+        background: #4caf50;
+        animation: none;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      #noMapMessage {
+        text-align: center;
+        color: #888;
+        font-size: 1.2em;
+      }
+
+      #noMapMessage h2 {
+        color: #4caf50;
+        margin-bottom: 15px;
+      }
+
+      #noMapMessage p {
+        margin: 10px 0;
+      }
+
+      #terrainLegend {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(26, 26, 26, 0.95);
+        border: 2px solid #4caf50;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        max-width: 200px;
+      }
+
+      #terrainLegend h3 {
+        color: #4caf50;
+        font-size: 1em;
+        margin: 0 0 10px 0;
+        border-bottom: 1px solid #4caf50;
+        padding-bottom: 5px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 8px 0;
+        font-size: 0.9em;
+      }
+
+      .legend-color {
+        width: 24px;
+        height: 24px;
+        border: 1px solid #333;
+        border-radius: 4px;
+        opacity: 0.7;
+      }
+
+      #measureDisplay {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(156, 39, 176, 0.95);
+        border: 2px solid #ba68c8;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 1em;
+        font-weight: bold;
+        color: #fff;
+        display: none;
+        box-shadow: 0 4px 20px rgba(156, 39, 176, 0.5);
+        pointer-events: none;
+        z-index: 100;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="playerViewHeader">
+      <h1>🗺️ Battle Map - Player View</h1>
+      <div
+        id="layerIndicator"
+        style="color: #4caf50; font-size: 1em; font-weight: bold"
+      ></div>
+      <div id="playerViewControls">
+        <div class="connection-status">
+          <span class="status-dot" id="connectionDot"></span>
+          <span id="connectionStatus">Connecting...</span>
+        </div>
+        <div class="zoom-controls">
+          <button class="player-control-button" onclick="playerZoom(0.1)">
+            ➕
+          </button>
+          <button class="player-control-button" onclick="playerZoom(-0.1)">
+            ➖
+          </button>
+          <button class="player-control-button" onclick="playerResetZoom()">
+            ↻
+          </button>
+        </div>
+        <button
+          class="player-control-button"
+          id="toggleNamesBtn"
+          onclick="togglePlayerNames()"
+        >
+          👁️ Names
+        </button>
+        <button class="player-control-button" onclick="toggleFullscreen()">
+          ⛶ Fullscreen
+        </button>
+        <button
+          class="player-control-button"
+          id="toggleMeasureBtn"
+          onclick="toggleMeasureTool()"
+        >
+          📏 Measure
+        </button>
+        <button
+          class="player-control-button"
+          id="toggleLegendBtn"
+          onclick="toggleLegend()"
+        >
+          🗂️ Legend
+        </button>
+        <button
+          class="player-control-button"
+          id="toggleViewModeBtn"
+          onclick="togglePlayerViewMode()"
+        >
+          ⬜ 2D
+        </button>
+      </div>
+    </div>
+
+    <div id="battleMapPlayerContainer">
+      <div id="measureDisplay"></div>
+      <div id="terrainLegend" style="display: none">
+        <h3>🗺️ Terrain Key</h3>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #666666"></div>
+          <span>Wall</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #8b4513"></div>
+          <span>Furniture</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #2e7d32"></div>
+          <span>Landscape</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #1976d2"></div>
+          <span>Water</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #ff6f00"></div>
+          <span>Difficult Terrain</span>
+        </div>
+      </div>
+      <canvas id="battleMapPlayerCanvas"></canvas>
+      <div id="noMapMessage" style="display: none">
+        <h2>No Active Battle Map</h2>
+        <p>Waiting for GM to set up the battle map...</p>
+        <p style="font-size: 0.9em; margin-top: 20px">
+          Make sure the GM application is open in another window.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Player View State
+      let playerView = {
+        zoom: 1.0,
+        showNames: false,
+        lastUpdateTime: 0,
+        isConnected: false,
+        lastStateHash: null,
+        measureActive: false,
+        measureStart: null,
+        measureEnd: null,
+        showLegend: false,
+        viewMode: "2d", // '2d' or 'isometric'
+      };
+
+      // Animation state for smooth transitions
+      let animationState = {
+        combatants: {}, // combatantId: { currentX, currentY, currentFacing, targetX, targetY, targetFacing }
+        isAnimating: false,
+      };
+
+      // Cache for background image to avoid reloading every frame
+      let backgroundImageCache = {
+        url: null,
+        image: null,
+        loaded: false,
+      };
+
+      let canvas = document.getElementById("battleMapPlayerCanvas");
+      let ctx = canvas.getContext("2d");
+
+      // Initialize
+      function initPlayerView() {
+        loadPlayerViewState();
+        renderPlayerMap();
+
+        // Listen for storage changes from GM view
+        window.addEventListener("storage", (e) => {
+          if (e.key === "battleMapState") {
+            console.log("Battle map updated by GM");
+            updateConnectionStatus(true);
+            checkAndRender();
+          }
+        });
+
+        // Poll for updates every 2 seconds as backup (only renders if changed)
+        setInterval(() => {
+          checkAndRender();
+        }, 2000);
+
+        // Update connection status every 5 seconds
+        setInterval(checkConnection, 5000);
+        checkConnection();
+
+        // Animation loop for smooth transitions
+        requestAnimationFrame(animationLoop);
+      }
+
+      // Animation loop for smooth combatant movement
+      function animationLoop() {
+        if (animationState.isAnimating) {
+          updateAnimations();
+          renderPlayerMap();
+        }
+        requestAnimationFrame(animationLoop);
+      }
+
+      // Update animation states with interpolation
+      function updateAnimations() {
+        const animationSpeed = 0.15; // Higher = faster animation
+        let anyAnimating = false;
+
+        Object.keys(animationState.combatants).forEach((combatantId) => {
+          const anim = animationState.combatants[combatantId];
+
+          // Interpolate position
+          const dx = anim.targetX - anim.currentX;
+          const dy = anim.targetY - anim.currentY;
+          if (Math.abs(dx) > 0.01 || Math.abs(dy) > 0.01) {
+            anim.currentX += dx * animationSpeed;
+            anim.currentY += dy * animationSpeed;
+            anyAnimating = true;
+          } else {
+            anim.currentX = anim.targetX;
+            anim.currentY = anim.targetY;
+          }
+
+          // Interpolate rotation (handle wrapping around 360)
+          let facingDiff = anim.targetFacing - anim.currentFacing;
+          if (facingDiff > 180) facingDiff -= 360;
+          if (facingDiff < -180) facingDiff += 360;
+
+          if (Math.abs(facingDiff) > 0.5) {
+            anim.currentFacing += facingDiff * animationSpeed;
+            if (anim.currentFacing < 0) anim.currentFacing += 360;
+            if (anim.currentFacing >= 360) anim.currentFacing -= 360;
+            anyAnimating = true;
+          } else {
+            anim.currentFacing = anim.targetFacing;
+          }
+        });
+
+        animationState.isAnimating = anyAnimating;
+      }
+
+      // Initialize or update animation state for a combatant
+      function updateCombatantAnimation(
+        combatantId,
+        targetX,
+        targetY,
+        targetFacing
+      ) {
+        if (!animationState.combatants[combatantId]) {
+          // First time seeing this combatant, start at target (no animation)
+          animationState.combatants[combatantId] = {
+            currentX: targetX,
+            currentY: targetY,
+            currentFacing: targetFacing,
+            targetX: targetX,
+            targetY: targetY,
+            targetFacing: targetFacing,
+          };
+        } else {
+          // Update target and trigger animation
+          const anim = animationState.combatants[combatantId];
+          anim.targetX = targetX;
+          anim.targetY = targetY;
+          anim.targetFacing = targetFacing;
+          animationState.isAnimating = true;
+        }
+      }
+
+      function checkAndRender() {
+        const savedState = localStorage.getItem("battleMapState");
+        if (!savedState) {
+          if (playerView.lastStateHash !== null) {
+            // State was removed, update display
+            playerView.lastStateHash = null;
+            renderPlayerMap();
+          }
+          return;
+        }
+
+        // Only render if the state has actually changed
+        if (savedState !== playerView.lastStateHash) {
+          playerView.lastStateHash = savedState;
+          renderPlayerMap();
+        }
+      }
+
+      function checkConnection() {
+        const gmState = localStorage.getItem("battleMapState");
+        const isConnected = gmState !== null;
+        updateConnectionStatus(isConnected);
+      }
+
+      function updateConnectionStatus(connected) {
+        playerView.isConnected = connected;
+        const dot = document.getElementById("connectionDot");
+        const status = document.getElementById("connectionStatus");
+
+        if (connected) {
+          dot.classList.add("connected");
+          status.textContent = "Connected";
+          status.style.color = "#4caf50";
+        } else {
+          dot.classList.remove("connected");
+          status.textContent = "Disconnected";
+          status.style.color = "#f44336";
+        }
+      }
+
+      function loadPlayerViewState() {
+        const saved = localStorage.getItem("playerViewState");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          playerView.zoom = parsed.zoom || 1.0;
+          playerView.showNames = parsed.showNames || false;
+          playerView.viewMode = parsed.viewMode || "2d";
+          updateNamesButton();
+          updateViewModeButton();
+        }
+      }
+
+      function savePlayerViewState() {
+        localStorage.setItem(
+          "playerViewState",
+          JSON.stringify({
+            zoom: playerView.zoom,
+            showNames: playerView.showNames,
+            viewMode: playerView.viewMode,
+          })
+        );
+      }
+
+      function renderPlayerMap() {
+        // Load battle map state from localStorage (shared with GM view)
+        const savedState = localStorage.getItem("battleMapState");
+
+        if (!savedState) {
+          // No map data available
+          canvas.style.display = "none";
+          document.getElementById("noMapMessage").style.display = "block";
+          return;
+        }
+
+        canvas.style.display = "block";
+        document.getElementById("noMapMessage").style.display = "none";
+
+        const battleMap = JSON.parse(savedState);
+
+        // Get active layer
+        let layer;
+        if (battleMap.layers && battleMap.layers.length > 0) {
+          // Multi-layer format
+          layer =
+            battleMap.layers.find((l) => l.id === battleMap.activeLayerId) ||
+            battleMap.layers[0];
+          // Update layer indicator
+          document.getElementById("layerIndicator").textContent = `📍 ${
+            layer.name || "Layer " + layer.id
+          }`;
+        } else {
+          // Legacy single-layer format (for backward compatibility)
+          layer = {
+            width: battleMap.width || 10,
+            height: battleMap.height || 10,
+            terrain: battleMap.terrain || [],
+            backgroundImage: battleMap.backgroundImage || null,
+            combatantPositions: battleMap.combatantPositions || {},
+            combatantFacing: battleMap.combatantFacing || {},
+          };
+          document.getElementById("layerIndicator").textContent = "";
+        }
+
+        // Calculate canvas size
+        const cellSize = 40;
+
+        // Check view mode and render accordingly
+        if (playerView.viewMode === "isometric") {
+          renderPlayerMapIsometric(layer, cellSize, battleMap);
+        } else {
+          renderPlayerMap2D(layer, cellSize, battleMap);
+        }
+      }
+
+      // Helper function to calculate visible cells for fog of war
+      function getVisibleCells(layer, battleMap) {
+        if (!battleMap.fogOfWar || !battleMap.fogOfWar.enabled) {
+          return null; // No fog of war
+        }
+
+        const visibleCells = new Set();
+        const visionDistance = battleMap.fogOfWar.visionDistance || 5;
+
+        // Get all PC combatant positions with their IDs
+        const pcData = Object.entries(layer.combatantPositions)
+          .filter(([id, pos]) => {
+            const combatant = battleMap.combatants.find(
+              (c) => c.id === parseInt(id)
+            );
+            return combatant && combatant.type === "PC";
+          })
+          .map(([id, pos]) => ({ id: parseInt(id), pos }));
+
+        if (battleMap.fogOfWar.mode === "lineOfSight") {
+          // Line of Sight: Only show cells within vision distance of PCs
+          // Full distance in front, 50% distance for peripheral (behind/sides)
+          pcData.forEach((pc) => {
+            const pcPos = pc.pos;
+            const facing = layer.combatantFacing[pc.id] || 0; // 0-360 degrees (0 = North)
+            const facingRad = (facing * Math.PI) / 180;
+
+            for (let y = 0; y < layer.height; y++) {
+              for (let x = 0; x < layer.width; x++) {
+                const dx = x - pcPos.x;
+                const dy = y - pcPos.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance === 0) {
+                  // PC's own cell is always visible
+                  visibleCells.add(`${x},${y}`);
+                  continue;
+                }
+
+                // Calculate angle from PC to cell (-PI to PI)
+                // Adjust so 0 degrees = North (negative Y direction)
+                let angleToCell = Math.atan2(dx, -dy);
+
+                // Calculate relative angle (how far from facing direction)
+                let relativeAngle = angleToCell - facingRad;
+
+                // Normalize to -PI to PI
+                while (relativeAngle > Math.PI) relativeAngle -= 2 * Math.PI;
+                while (relativeAngle < -Math.PI) relativeAngle += 2 * Math.PI;
+
+                // Determine if cell is in front (within 90° each side) or peripheral
+                const isInFront = Math.abs(relativeAngle) <= Math.PI / 2;
+                const effectiveVisionDistance = isInFront
+                  ? visionDistance
+                  : visionDistance * 0.5;
+
+                if (distance <= effectiveVisionDistance) {
+                  visibleCells.add(`${x},${y}`);
+                }
+              }
+            }
+          });
+        } else {
+          // Exploration: Show all previously revealed cells
+          const layerId =
+            battleMap.activeLayerId ||
+            (battleMap.layers && battleMap.layers[0]?.id) ||
+            1;
+          if (
+            battleMap.fogOfWar.revealedCells &&
+            battleMap.fogOfWar.revealedCells[layerId]
+          ) {
+            Object.keys(battleMap.fogOfWar.revealedCells[layerId]).forEach(
+              (key) => {
+                visibleCells.add(key);
+              }
+            );
+          }
+        }
+
+        return visibleCells;
+      }
+
+      function isCellVisible(x, y, visibleCells) {
+        if (!visibleCells) return true; // No fog of war
+        return visibleCells.has(`${x},${y}`);
+      }
+
+      // Check if light is blocked by terrain between two points
+      function calculateLightBlocking(x0, y0, x1, y1, layer) {
+        // Returns a value from 0.0 (completely blocked) to 1.0 (no blocking)
+        // Uses Bresenham's line algorithm to trace the ray from light source to target
+
+        if (!layer.terrain || layer.terrain.length === 0) {
+          return 1.0; // No terrain = no blocking
+        }
+
+        // Skip calculation for adjacent cells (performance optimization)
+        const dx = Math.abs(x1 - x0);
+        const dy = Math.abs(y1 - y0);
+        if (dx <= 1 && dy <= 1) {
+          return 1.0;
+        }
+
+        // Bresenham's line algorithm
+        let x = x0;
+        let y = y0;
+        const sx = x0 < x1 ? 1 : -1;
+        const sy = y0 < y1 ? 1 : -1;
+        let err = dx - dy;
+
+        let lightReduction = 1.0; // Start with no blocking
+
+        while (true) {
+          // Don't check the light source cell or the target cell
+          if (!(x === x0 && y === y0) && !(x === x1 && y === y1)) {
+            // Terrain is stored as an array of {x, y, type, color} objects
+            const terrainCell = layer.terrain.find(
+              (t) => t.x === x && t.y === y
+            );
+
+            if (terrainCell) {
+              // Check terrain type and apply blocking
+              if (terrainCell.type === "wall") {
+                // Walls completely block light
+                return 0.0;
+              } else if (terrainCell.type === "furniture") {
+                // Furniture reduces light by 50%
+                lightReduction *= 0.5;
+              } else if (terrainCell.type === "landscape") {
+                // Landscape reduces light by 30%
+                lightReduction *= 0.7;
+              }
+              // Other terrain types (water, difficult) don't block light
+
+              // Early exit if light is reduced to near-zero
+              if (lightReduction < 0.01) {
+                return 0.0;
+              }
+            }
+          }
+
+          // Check if we've reached the target
+          if (x === x1 && y === y1) break;
+
+          // Bresenham's algorithm step
+          const e2 = 2 * err;
+          if (e2 > -dy) {
+            err -= dy;
+            x += sx;
+          }
+          if (e2 < dx) {
+            err += dx;
+            y += sy;
+          }
+        }
+
+        return lightReduction;
+      }
+
+      // Helper function to calculate light intensity at a cell
+      function getLightIntensityAtCell(x, y, layer) {
+        if (!layer.lights || layer.lights.length === 0) {
+          return 0;
+        }
+
+        let maxIntensity = 0;
+
+        for (const light of layer.lights) {
+          const dx = x - light.x;
+          const dy = y - light.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance <= light.radius) {
+            // Check for terrain blocking light
+            const blockingFactor = calculateLightBlocking(
+              light.x,
+              light.y,
+              x,
+              y,
+              layer
+            );
+
+            if (blockingFactor > 0) {
+              // Linear falloff: intensity decreases linearly with distance
+              const falloff = Math.max(0, 1 - distance / light.radius);
+              const intensity = falloff * light.intensity * blockingFactor;
+              maxIntensity = Math.max(maxIntensity, intensity);
+            }
+          }
+        }
+
+        return maxIntensity;
+      }
+
+      function renderPlayerMap2D(layer, cellSize, battleMap) {
+        const totalWidth = layer.width * cellSize;
+        const totalHeight = layer.height * cellSize;
+
+        canvas.width = totalWidth * playerView.zoom;
+        canvas.height = totalHeight * playerView.zoom;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.scale(playerView.zoom, playerView.zoom);
+
+        // Draw background image if exists
+        if (layer.backgroundImage) {
+          // Check if we need to load a new image
+          if (backgroundImageCache.url !== layer.backgroundImage) {
+            backgroundImageCache.url = layer.backgroundImage;
+            backgroundImageCache.loaded = false;
+            backgroundImageCache.image = new Image();
+            backgroundImageCache.image.onload = () => {
+              backgroundImageCache.loaded = true;
+              renderPlayerMap(); // Re-render once loaded
+            };
+            backgroundImageCache.image.src = layer.backgroundImage;
+          }
+
+          // Draw if already loaded
+          if (backgroundImageCache.loaded && backgroundImageCache.image) {
+            ctx.globalAlpha = 0.7;
+            ctx.drawImage(
+              backgroundImageCache.image,
+              0,
+              0,
+              totalWidth,
+              totalHeight
+            );
+            ctx.globalAlpha = 1.0;
+          }
+          drawMapContent();
+        } else {
+          drawMapContent();
+        }
+
+        function drawMapContent() {
+          const visibleCells = getVisibleCells(layer, battleMap);
+
+          // Draw grid
+          ctx.strokeStyle = "#2a2a2a";
+          ctx.lineWidth = 1;
+
+          for (let x = 0; x <= layer.width; x++) {
+            ctx.beginPath();
+            ctx.moveTo(x * cellSize, 0);
+            ctx.lineTo(x * cellSize, totalHeight);
+            ctx.stroke();
+          }
+
+          for (let y = 0; y <= layer.height; y++) {
+            ctx.beginPath();
+            ctx.moveTo(0, y * cellSize);
+            ctx.lineTo(totalWidth, y * cellSize);
+            ctx.stroke();
+          }
+
+          // Draw terrain
+          if (layer.terrain) {
+            layer.terrain.forEach((cell) => {
+              // Only draw if visible
+              if (!isCellVisible(cell.x, cell.y, visibleCells)) return;
+
+              const terrainColors = {
+                wall: "#666666",
+                furniture: "#8B4513",
+                landscape: "#2E7D32",
+                water: "#1976D2",
+                difficult: "#FF6F00",
+              };
+
+              const color = terrainColors[cell.type] || cell.color;
+
+              // Fill terrain cell
+              ctx.fillStyle = color;
+              ctx.globalAlpha = 0.7;
+              ctx.fillRect(
+                cell.x * cellSize,
+                cell.y * cellSize,
+                cellSize,
+                cellSize
+              );
+
+              // Add texture pattern
+              ctx.globalAlpha = 0.3;
+              ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+              ctx.lineWidth = 1;
+              for (let i = 0; i < cellSize; i += 4) {
+                ctx.beginPath();
+                ctx.moveTo(cell.x * cellSize + i, cell.y * cellSize);
+                ctx.lineTo(cell.x * cellSize, cell.y * cellSize + i);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(cell.x * cellSize + cellSize - i, cell.y * cellSize);
+                ctx.lineTo(cell.x * cellSize + cellSize, cell.y * cellSize + i);
+                ctx.stroke();
+              }
+
+              // Draw border
+              ctx.globalAlpha = 1.0;
+              ctx.strokeStyle = color;
+              ctx.lineWidth = 2;
+              ctx.strokeRect(
+                cell.x * cellSize,
+                cell.y * cellSize,
+                cellSize,
+                cellSize
+              );
+
+              ctx.globalAlpha = 1.0;
+            });
+          }
+
+          // Draw AoE Templates
+          if (battleMap.aoeTemplates && battleMap.aoeTemplates.length > 0) {
+            battleMap.aoeTemplates.forEach((template) => {
+              // Only draw if center is visible
+              if (
+                !isCellVisible(
+                  Math.floor(template.x),
+                  Math.floor(template.y),
+                  visibleCells
+                )
+              )
+                return;
+
+              const centerX = (template.x + 0.5) * cellSize;
+              const centerY = (template.y + 0.5) * cellSize;
+              const size = template.size * cellSize;
+
+              ctx.save();
+
+              if (template.type === "circle") {
+                const radius = size / 2;
+                ctx.fillStyle = template.color;
+                ctx.strokeStyle = template.color.replace("0.3", "0.8");
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+              } else if (template.type === "square") {
+                const halfSize = size / 2;
+                ctx.fillStyle = template.color;
+                ctx.strokeStyle = template.color.replace("0.3", "0.8");
+                ctx.lineWidth = 3;
+                ctx.fillRect(
+                  centerX - halfSize,
+                  centerY - halfSize,
+                  size,
+                  size
+                );
+                ctx.strokeRect(
+                  centerX - halfSize,
+                  centerY - halfSize,
+                  size,
+                  size
+                );
+              } else if (template.type === "cone") {
+                const coneLength = size;
+                const coneWidth = (template.coneWidth || 3) * cellSize; // Use stored width or default
+                const radians = (template.rotation * Math.PI) / 180;
+
+                // Calculate cone angle based on width and length
+                const halfAngle = Math.atan2(coneWidth / 2, coneLength);
+
+                ctx.fillStyle = template.color;
+                ctx.strokeStyle = template.color.replace("0.3", "0.8");
+                ctx.lineWidth = 3;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(
+                  centerX,
+                  centerY,
+                  coneLength,
+                  radians - halfAngle,
+                  radians + halfAngle
+                );
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+              } else if (template.type === "line") {
+                const lineWidth = cellSize * 0.8;
+                const lineLength = size;
+                const radians = (template.rotation * Math.PI) / 180;
+
+                const endX = centerX + Math.cos(radians) * lineLength;
+                const endY = centerY + Math.sin(radians) * lineLength;
+
+                ctx.strokeStyle = template.color;
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = "round";
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+
+                // Draw starting circle
+                ctx.fillStyle = template.color;
+                ctx.strokeStyle = template.color.replace("0.3", "0.8");
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, lineWidth / 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+              }
+
+              ctx.restore();
+            });
+          }
+
+          // Draw combatants (now included in battleMap state)
+          if (battleMap.combatants && layer.combatantPositions) {
+            const visibleCells = getVisibleCells(layer, battleMap);
+            battleMap.combatants.forEach((combatant) => {
+              const pos = layer.combatantPositions[combatant.id];
+              if (pos) {
+                // Update animation target
+                const facing =
+                  (layer.combatantFacing &&
+                    layer.combatantFacing[combatant.id]) ||
+                  0;
+                updateCombatantAnimation(combatant.id, pos.x, pos.y, facing);
+
+                // Use animated position for rendering
+                const animPos = animationState.combatants[combatant.id];
+                const renderX = animPos ? animPos.currentX : pos.x;
+                const renderY = animPos ? animPos.currentY : pos.y;
+                const renderFacing = animPos ? animPos.currentFacing : facing;
+
+                const isVisible = isCellVisible(
+                  Math.floor(renderX),
+                  Math.floor(renderY),
+                  visibleCells
+                );
+                const isEnemy =
+                  combatant.type === "Enemy" || combatant.type === "Creature";
+                const isNPC = combatant.type === "NPC";
+
+                // Check if in lit fogged area
+                const lightIntensity = getLightIntensityAtCell(
+                  Math.floor(renderX),
+                  Math.floor(renderY),
+                  layer
+                );
+                const isInLitFog =
+                  !isVisible &&
+                  lightIntensity > 0 &&
+                  battleMap.fogOfWar &&
+                  battleMap.fogOfWar.enabled;
+
+                // Skip if not visible, unless Enemy/NPC in lit fog
+                if (!isVisible && !((isEnemy || isNPC) && isInLitFog)) return;
+
+                // Calculate opacity for enemies/NPCs in lit fogged areas
+                let tokenOpacity = 1;
+                if ((isEnemy || isNPC) && isInLitFog) {
+                  const lightTransparency =
+                    battleMap.fogOfWar.lightTransparency || 0;
+                  tokenOpacity = 0.3 + lightIntensity * lightTransparency * 0.5;
+                }
+
+                drawCombatantToken(
+                  combatant,
+                  renderX,
+                  renderY,
+                  renderFacing,
+                  cellSize,
+                  battleMap,
+                  layer,
+                  tokenOpacity
+                );
+              }
+            });
+          }
+
+          // Draw Fog of War overlay (players see complete darkness)
+          if (battleMap.fogOfWar && battleMap.fogOfWar.enabled) {
+            const visibleCells = getVisibleCells(layer, battleMap);
+
+            for (let y = 0; y < layer.height; y++) {
+              for (let x = 0; x < layer.width; x++) {
+                if (!isCellVisible(x, y, visibleCells)) {
+                  // Check if this cell is lit
+                  const lightIntensity = getLightIntensityAtCell(x, y, layer);
+                  const baseOpacity = 1.0; // Players see complete darkness by default
+                  const lightTransparency =
+                    battleMap.fogOfWar.lightTransparency || 0;
+                  // Reduce opacity based on light intensity and transparency setting
+                  const finalOpacity =
+                    baseOpacity * (1 - lightIntensity * lightTransparency);
+
+                  // Players see darkness, reduced by lighting
+                  ctx.fillStyle = `rgba(0, 0, 0, ${finalOpacity})`;
+                  ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+              }
+            }
+          }
+
+          ctx.restore();
+        }
+      }
+
+      function drawCombatantToken(
+        combatant,
+        gridX,
+        gridY,
+        facing,
+        cellSize,
+        battleMap,
+        layer,
+        opacity = 1
+      ) {
+        ctx.globalAlpha = opacity;
+        // Get combatant size (1=Medium, 2=Large, 3=Huge, 4=Gargantuan)
+        const size =
+          (battleMap.combatantSizes &&
+            battleMap.combatantSizes[combatant.id]) ||
+          1;
+        const elevation =
+          (battleMap.combatantElevations &&
+            battleMap.combatantElevations[combatant.id]) ||
+          0;
+
+        const tokenWidth = cellSize * size;
+        const tokenHeight = cellSize * size;
+        const x = gridX * cellSize + tokenWidth / 2;
+        const y = gridY * cellSize + tokenHeight / 2;
+        const radius = (Math.min(tokenWidth, tokenHeight) / 2) * 0.8;
+
+        // Save context and apply rotation
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate((facing * Math.PI) / 180);
+        ctx.translate(-x, -y);
+
+        // Get token
+        let token = "❓";
+        let tokenType = "emoji";
+
+        // Check for custom token
+        if (battleMap.customTokens && battleMap.customTokens[combatant.id]) {
+          const customToken = battleMap.customTokens[combatant.id];
+          tokenType = customToken.type;
+          token = customToken.value;
+        } else if (combatant.sourceToken) {
+          tokenType = combatant.sourceToken.type;
+          token = combatant.sourceToken.value;
+        } else {
+          // Default tokens
+          if (combatant.type === "PC") token = "🎭";
+          else if (combatant.type === "NPC") token = "👤";
+          else token = "💀";
+        }
+
+        // Draw token background
+        if (combatant.type === "Enemy" || combatant.type === "Creature") {
+          ctx.fillStyle = "#DC143C";
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (combatant.type === "NPC") {
+          ctx.fillStyle = "#FFA500";
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = "#4caf50";
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Draw token
+        if (tokenType === "image") {
+          const img = new Image();
+          img.onload = () => {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.clip();
+            ctx.drawImage(img, x - radius, y - radius, radius * 2, radius * 2);
+            ctx.restore();
+          };
+          img.src = token;
+        } else {
+          ctx.font = `${cellSize * 0.5}px Arial`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(token, x, y);
+        }
+
+        ctx.globalAlpha = 1; // Reset opacity
+
+        // Draw elevation indicator
+        if (elevation !== 0) {
+          const elevX = x + radius - 10;
+          const elevY = y - radius + 10;
+          const elevBgColor =
+            elevation > 0
+              ? "rgba(135, 206, 250, 0.95)"
+              : "rgba(139, 69, 19, 0.95)";
+          const elevBorderColor = elevation > 0 ? "#4169E1" : "#8B4513";
+
+          // Draw badge background
+          ctx.fillStyle = elevBgColor;
+          ctx.strokeStyle = elevBorderColor;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(elevX, elevY, 10, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Draw elevation value
+          ctx.font = "bold 10px Arial";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(
+            elevation > 0 ? "+" + elevation : elevation.toString(),
+            elevX,
+            elevY
+          );
+        }
+
+        // Draw name if enabled or if it's a PC
+        if (playerView.showNames || combatant.type === "PC") {
+          const displayName = combatant.displayName || combatant.name;
+          ctx.font = "12px Arial";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillStyle = "#000000";
+          ctx.fillText(displayName, x + 1, y + radius + 4);
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(displayName, x, y + radius + 3);
+        }
+
+        // Restore context before drawing facing indicator
+        ctx.restore();
+
+        // Draw facing indicator if line of sight is on
+        if (
+          battleMap.showLineOfSight &&
+          layer.combatantFacing &&
+          layer.combatantFacing[combatant.id] !== undefined
+        ) {
+          drawFacingIndicator(
+            x,
+            y,
+            layer.combatantFacing[combatant.id],
+            radius,
+            cellSize
+          );
+        }
+      }
+
+      function drawFacingIndicator(x, y, degrees, radius, cellSize) {
+        const radians = (degrees * Math.PI) / 180;
+        const coneLength = cellSize * 1.5;
+        const coneSpread = 30; // degrees on each side
+
+        ctx.save();
+
+        // Calculate cone points using same math as GM view
+        const leftAngle = ((degrees - coneSpread) * Math.PI) / 180;
+        const rightAngle = ((degrees + coneSpread) * Math.PI) / 180;
+        const endX = x + Math.sin(radians) * coneLength;
+        const endY = y - Math.cos(radians) * coneLength;
+        const leftX = x + Math.sin(leftAngle) * coneLength;
+        const leftY = y - Math.cos(leftAngle) * coneLength;
+        const rightX = x + Math.sin(rightAngle) * coneLength;
+        const rightY = y - Math.cos(rightAngle) * coneLength;
+
+        // Draw cone
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(leftX, leftY);
+        ctx.lineTo(rightX, rightY);
+        ctx.closePath();
+
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, coneLength);
+        gradient.addColorStop(0, "rgba(255, 255, 100, 0.4)");
+        gradient.addColorStop(1, "rgba(255, 255, 100, 0)");
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255, 255, 100, 0.6)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      // Player controls
+      function playerZoom(delta) {
+        playerView.zoom = Math.max(0.5, Math.min(2.0, playerView.zoom + delta));
+        savePlayerViewState();
+        renderPlayerMap();
+        if (measureCanvas) {
+          initMeasureCanvas(); // Resize overlay canvas
+          if (playerView.measureActive && playerView.measureStart) {
+            drawMeasurementOverlay(); // Redraw at new zoom
+          }
+        }
+      }
+
+      function playerResetZoom() {
+        playerView.zoom = 1.0;
+        savePlayerViewState();
+        renderPlayerMap();
+        if (measureCanvas) {
+          initMeasureCanvas(); // Resize overlay canvas
+          if (playerView.measureActive && playerView.measureStart) {
+            drawMeasurementOverlay(); // Redraw at new zoom
+          }
+        }
+      }
+
+      function togglePlayerNames() {
+        playerView.showNames = !playerView.showNames;
+        savePlayerViewState();
+        updateNamesButton();
+        renderPlayerMap();
+      }
+
+      function updateNamesButton() {
+        const btn = document.getElementById("toggleNamesBtn");
+        if (playerView.showNames) {
+          btn.classList.add("active");
+          btn.textContent = "👁️ Names ON";
+        } else {
+          btn.classList.remove("active");
+          btn.textContent = "👁️ Names OFF";
+        }
+      }
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      function toggleMeasureTool() {
+        playerView.measureActive = !playerView.measureActive;
+        const btn = document.getElementById("toggleMeasureBtn");
+
+        if (playerView.measureActive) {
+          btn.classList.add("active");
+          btn.textContent = "📏 Measure ON";
+          canvas.style.cursor = "crosshair";
+          if (!measureCanvas) initMeasureCanvas();
+        } else {
+          btn.classList.remove("active");
+          btn.textContent = "📏 Measure";
+          canvas.style.cursor = "default";
+          playerView.measureStart = null;
+          playerView.measureEnd = null;
+          document.getElementById("measureDisplay").style.display = "none";
+          clearMeasurementOverlay();
+        }
+      }
+
+      function togglePlayerViewMode() {
+        playerView.viewMode = playerView.viewMode === "2d" ? "isometric" : "2d";
+        savePlayerViewState();
+        updateViewModeButton();
+        renderPlayerMap();
+      }
+
+      function updateViewModeButton() {
+        const btn = document.getElementById("toggleViewModeBtn");
+        if (playerView.viewMode === "isometric") {
+          btn.classList.add("active");
+          btn.textContent = "🎲 Isometric";
+        } else {
+          btn.classList.remove("active");
+          btn.textContent = "⬜ 2D";
+        }
+      }
+
+      // Isometric coordinate conversion functions
+      function gridToIsometric(gridX, gridY, cellSize, elevation = 0) {
+        const tileWidth = cellSize;
+        const tileHeight = cellSize / 2;
+
+        const isoX = (gridX - gridY) * (tileWidth / 2);
+        const isoY =
+          (gridX + gridY) * (tileHeight / 2) - elevation * tileHeight;
+
+        return { x: isoX, y: isoY };
+      }
+
+      function renderPlayerMapIsometric(layer, cellSize, battleMap) {
+        const tileWidth = cellSize;
+        const tileHeight = cellSize / 2;
+
+        const isoWidth = (layer.width + layer.height) * (tileWidth / 2);
+        const isoHeight = (layer.width + layer.height) * (tileHeight / 2);
+        const centerOffsetX = (layer.height * tileWidth) / 2;
+        const centerOffsetY = cellSize;
+
+        const totalWidth = isoWidth + cellSize;
+        const totalHeight = isoHeight + cellSize * 3;
+
+        canvas.width = totalWidth * playerView.zoom;
+        canvas.height = totalHeight * playerView.zoom;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.scale(playerView.zoom, playerView.zoom);
+
+        // Draw background image if exists (transformed to isometric)
+        if (layer.backgroundImage) {
+          // Check if we need to load a new image
+          if (backgroundImageCache.url !== layer.backgroundImage) {
+            backgroundImageCache.url = layer.backgroundImage;
+            backgroundImageCache.loaded = false;
+            backgroundImageCache.image = new Image();
+            backgroundImageCache.image.onload = () => {
+              backgroundImageCache.loaded = true;
+              renderPlayerMap(); // Re-render once loaded
+            };
+            backgroundImageCache.image.src = layer.backgroundImage;
+          }
+
+          // Draw if already loaded
+          if (backgroundImageCache.loaded && backgroundImageCache.image) {
+            // Draw background with isometric transformation applied to the whole image
+            ctx.save();
+            ctx.globalAlpha = 0.5;
+
+            // Apply isometric transformation matrix to the entire background
+            // Position at the center offset
+            ctx.translate(centerOffsetX + cellSize / 2, centerOffsetY);
+
+            // Apply the isometric projection matrix
+            const a = 0.5;
+            const b = 0.25;
+            const c = -0.5;
+            const d = 0.25;
+            ctx.transform(a, b, c, d, 0, 0);
+
+            // Draw the full background image scaled to grid dimensions
+            const gridImageWidth = layer.width * cellSize;
+            const gridImageHeight = layer.height * cellSize;
+            ctx.drawImage(
+              backgroundImageCache.image,
+              0,
+              0,
+              gridImageWidth,
+              gridImageHeight
+            );
+
+            ctx.globalAlpha = 1.0;
+            ctx.restore();
+          }
+          drawIsometricMapContent();
+        } else {
+          drawIsometricMapContent();
+        }
+
+        function drawIsometricMapContent() {
+          const visibleCells = getVisibleCells(layer, battleMap);
+
+          // Draw grid cells
+          for (let y = 0; y < layer.height; y++) {
+            for (let x = 0; x < layer.width; x++) {
+              // Skip invisible cells in fog of war
+              if (!isCellVisible(x, y, visibleCells)) continue;
+
+              const terrain = layer.terrain.find((t) => t.x === x && t.y === y);
+              const iso = gridToIsometric(x, y, cellSize);
+              const isoX = iso.x + centerOffsetX;
+              const isoY = iso.y + centerOffsetY;
+
+              const terrainColors = {
+                wall: "#666666",
+                furniture: "#8B4513",
+                landscape: "#2E7D32",
+                water: "#1976D2",
+                difficult: "#FF6F00",
+              };
+
+              const bgColor = terrain
+                ? terrainColors[terrain.type]
+                : "rgba(50, 50, 50, 0.3)";
+              const borderColor = terrain
+                ? terrainColors[terrain.type]
+                : "rgba(76, 175, 80, 0.3)";
+
+              // Draw isometric diamond
+              ctx.beginPath();
+              ctx.moveTo(isoX + tileWidth / 2, isoY);
+              ctx.lineTo(isoX + tileWidth, isoY + tileHeight / 2);
+              ctx.lineTo(isoX + tileWidth / 2, isoY + tileHeight);
+              ctx.lineTo(isoX, isoY + tileHeight / 2);
+              ctx.closePath();
+
+              ctx.fillStyle = bgColor;
+              ctx.globalAlpha = terrain ? 0.85 : 0.6;
+              ctx.fill();
+
+              // Add texture pattern for terrain
+              if (terrain) {
+                ctx.save();
+                ctx.clip();
+                ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
+                ctx.lineWidth = 1;
+                for (let i = -tileWidth; i < tileWidth * 2; i += 4) {
+                  ctx.beginPath();
+                  ctx.moveTo(isoX + i, isoY);
+                  ctx.lineTo(isoX + i + tileHeight, isoY + tileHeight);
+                  ctx.stroke();
+                }
+                ctx.restore();
+              }
+
+              ctx.globalAlpha = 1.0;
+              ctx.strokeStyle = borderColor;
+              ctx.lineWidth = terrain ? 2 : 1;
+              ctx.beginPath();
+              ctx.moveTo(isoX + tileWidth / 2, isoY);
+              ctx.lineTo(isoX + tileWidth, isoY + tileHeight / 2);
+              ctx.lineTo(isoX + tileWidth / 2, isoY + tileHeight);
+              ctx.lineTo(isoX, isoY + tileHeight / 2);
+              ctx.closePath();
+              ctx.stroke();
+            }
+          }
+
+          // Draw dynamic lights in isometric
+          if (
+            layer.lights &&
+            layer.lights.length > 0 &&
+            battleMap.fogOfWar?.enabled
+          ) {
+            layer.lights.forEach((light) => {
+              // Only draw lights in visible areas
+              if (!isCellVisible(light.x, light.y, visibleCells)) return;
+
+              const iso = gridToIsometric(light.x, light.y, cellSize);
+              const isoX = iso.x + centerOffsetX + tileWidth / 2;
+              const isoY = iso.y + centerOffsetY + tileHeight / 2;
+
+              // Draw light glow (ellipse for isometric perspective)
+              const gradient = ctx.createRadialGradient(
+                isoX,
+                isoY,
+                0,
+                isoX,
+                isoY,
+                light.radius * cellSize
+              );
+              const color = light.color || "#ffeb3b";
+              const intensity = (light.intensity || 100) / 100;
+
+              gradient.addColorStop(
+                0,
+                color
+                  .replace(")", `, ${0.4 * intensity})`)
+                  .replace("rgb", "rgba")
+              );
+              gradient.addColorStop(
+                0.5,
+                color
+                  .replace(")", `, ${0.15 * intensity})`)
+                  .replace("rgb", "rgba")
+              );
+              gradient.addColorStop(1, "rgba(255, 235, 59, 0)");
+
+              ctx.save();
+              ctx.fillStyle = gradient;
+              ctx.beginPath();
+              ctx.ellipse(
+                isoX,
+                isoY,
+                light.radius * cellSize,
+                (light.radius * cellSize) / 2,
+                0,
+                0,
+                Math.PI * 2
+              );
+              ctx.fill();
+              ctx.restore();
+
+              // Draw light indicator
+              ctx.save();
+              ctx.font = `${cellSize * 0.6}px Arial`;
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+              ctx.shadowBlur = 4;
+              ctx.shadowOffsetX = 1;
+              ctx.shadowOffsetY = 1;
+              ctx.fillText("💡", isoX, isoY - cellSize * 0.1);
+              ctx.restore();
+            });
+          }
+
+          // Draw AoE Templates in isometric
+          if (battleMap.aoeTemplates && battleMap.aoeTemplates.length > 0) {
+            battleMap.aoeTemplates.forEach((template) => {
+              // Only draw if visible
+              if (
+                !isCellVisible(
+                  Math.floor(template.x),
+                  Math.floor(template.y),
+                  visibleCells
+                )
+              )
+                return;
+
+              const iso = gridToIsometric(template.x, template.y, cellSize);
+              const isoX = iso.x + centerOffsetX + tileWidth / 2;
+              const isoY = iso.y + centerOffsetY + tileHeight / 2;
+
+              ctx.save();
+              ctx.globalAlpha = 0.5;
+
+              if (template.type === "circle") {
+                const radius = (template.size * cellSize) / 2;
+                ctx.fillStyle = template.color;
+                ctx.strokeStyle = template.color.replace("0.3", "0.8");
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.ellipse(isoX, isoY, radius, radius / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+              }
+
+              ctx.restore();
+            });
+          }
+
+          // Draw combatants in isometric
+          if (battleMap.combatants && layer.combatantPositions) {
+            Object.entries(layer.combatantPositions).forEach(
+              ([combatantId, pos]) => {
+                const combatant = battleMap.combatants.find(
+                  (c) => c.id === parseInt(combatantId)
+                );
+                if (!combatant) return;
+
+                // Update animation target
+                const facing =
+                  (layer.combatantFacing &&
+                    layer.combatantFacing[combatantId]) ||
+                  0;
+                updateCombatantAnimation(combatantId, pos.x, pos.y, facing);
+
+                // Use animated position for rendering
+                const animPos = animationState.combatants[combatantId];
+                const renderX = animPos ? animPos.currentX : pos.x;
+                const renderY = animPos ? animPos.currentY : pos.y;
+                const renderFacing = animPos ? animPos.currentFacing : facing;
+
+                const isVisible = isCellVisible(
+                  Math.floor(renderX),
+                  Math.floor(renderY),
+                  visibleCells
+                );
+                const isEnemy =
+                  combatant.type === "Enemy" || combatant.type === "Creature";
+                const isNPC = combatant.type === "NPC";
+
+                // Check if in lit fogged area
+                const lightIntensity = getLightIntensityAtCell(
+                  Math.floor(renderX),
+                  Math.floor(renderY),
+                  layer
+                );
+                const isInLitFog =
+                  !isVisible &&
+                  lightIntensity > 0 &&
+                  battleMap.fogOfWar &&
+                  battleMap.fogOfWar.enabled;
+
+                // Skip if not visible, unless Enemy/NPC in lit fog
+                if (!isVisible && !((isEnemy || isNPC) && isInLitFog)) return;
+
+                // Calculate opacity for enemies/NPCs in lit fogged areas
+                let tokenOpacity = 1;
+                if ((isEnemy || isNPC) && isInLitFog) {
+                  const lightTransparency =
+                    battleMap.fogOfWar.lightTransparency || 0;
+                  tokenOpacity = 0.3 + lightIntensity * lightTransparency * 0.5;
+                }
+
+                ctx.globalAlpha = tokenOpacity;
+
+                const size =
+                  (battleMap.combatantSizes &&
+                    battleMap.combatantSizes[combatantId]) ||
+                  1;
+                const elevation =
+                  (battleMap.combatantElevations &&
+                    battleMap.combatantElevations[combatantId]) ||
+                  0;
+
+                const iso = gridToIsometric(
+                  renderX,
+                  renderY,
+                  cellSize,
+                  elevation
+                );
+                const isoX = iso.x + centerOffsetX + (tileWidth * size) / 2;
+                const isoY = iso.y + centerOffsetY + tileHeight / 2;
+
+                const tokenSize =
+                  Math.min(tileWidth, tileHeight * 1.5) * size * 0.8;
+
+                // Save context and apply rotation
+                ctx.save();
+                ctx.translate(isoX, isoY - tokenSize / 3);
+                ctx.rotate((renderFacing * Math.PI) / 180);
+                ctx.translate(-isoX, -(isoY - tokenSize / 3));
+
+                // Draw combatant token in isometric
+                const radius = tokenSize / 2;
+
+                // Get token
+                let token = "❓";
+                let tokenType = "emoji";
+
+                // Check for custom token
+                if (
+                  battleMap.customTokens &&
+                  battleMap.customTokens[combatant.id]
+                ) {
+                  const customToken = battleMap.customTokens[combatant.id];
+                  tokenType = customToken.type;
+                  token = customToken.value;
+                } else if (combatant.sourceToken) {
+                  tokenType = combatant.sourceToken.type;
+                  token = combatant.sourceToken.value;
+                } else {
+                  // Default tokens
+                  if (combatant.type === "PC") token = "🎭";
+                  else if (combatant.type === "NPC") token = "👤";
+                  else token = "💀";
+                }
+
+                // Draw token background
+                if (
+                  combatant.type === "Enemy" ||
+                  combatant.type === "Creature"
+                ) {
+                  ctx.fillStyle = "#DC143C";
+                  ctx.beginPath();
+                  ctx.arc(isoX, isoY - tokenSize / 3, radius, 0, Math.PI * 2);
+                  ctx.fill();
+                } else if (combatant.type === "NPC") {
+                  ctx.fillStyle = "#FFA500";
+                  ctx.beginPath();
+                  ctx.arc(isoX, isoY - tokenSize / 3, radius, 0, Math.PI * 2);
+                  ctx.fill();
+                } else {
+                  ctx.fillStyle = "#4caf50";
+                  ctx.beginPath();
+                  ctx.arc(isoX, isoY - tokenSize / 3, radius, 0, Math.PI * 2);
+                  ctx.fill();
+                }
+
+                // Draw token
+                if (tokenType === "image") {
+                  const img = new Image();
+                  img.onload = () => {
+                    ctx.save();
+                    ctx.globalAlpha = tokenOpacity;
+                    ctx.beginPath();
+                    ctx.arc(isoX, isoY - tokenSize / 3, radius, 0, Math.PI * 2);
+                    ctx.clip();
+                    ctx.drawImage(
+                      img,
+                      isoX - radius,
+                      isoY - tokenSize / 3 - radius,
+                      radius * 2,
+                      radius * 2
+                    );
+                    ctx.restore();
+                  };
+                  img.src = token;
+                } else {
+                  ctx.font = `${tokenSize * 0.5}px Arial`;
+                  ctx.textAlign = "center";
+                  ctx.textBaseline = "middle";
+                  ctx.fillStyle = "#ffffff";
+                  ctx.fillText(token, isoX, isoY - tokenSize / 3);
+                }
+
+                // Draw elevation indicator
+                if (elevation !== 0) {
+                  const elevX = isoX + radius - 10;
+                  const elevY = isoY - tokenSize / 3 - radius + 10;
+                  const elevBgColor =
+                    elevation > 0
+                      ? "rgba(135, 206, 250, 0.95)"
+                      : "rgba(139, 69, 19, 0.95)";
+                  const elevBorderColor = elevation > 0 ? "#4169E1" : "#8B4513";
+
+                  // Draw badge background
+                  ctx.fillStyle = elevBgColor;
+                  ctx.strokeStyle = elevBorderColor;
+                  ctx.lineWidth = 1;
+                  ctx.beginPath();
+                  ctx.arc(elevX, elevY, 8, 0, Math.PI * 2);
+                  ctx.fill();
+                  ctx.stroke();
+
+                  // Draw elevation value
+                  ctx.font = "bold 10px Arial";
+                  ctx.textAlign = "center";
+                  ctx.textBaseline = "middle";
+                  ctx.fillStyle = "#000";
+                  ctx.fillText(
+                    elevation > 0 ? `+${elevation}` : elevation,
+                    elevX,
+                    elevY
+                  );
+                }
+
+                ctx.globalAlpha = 1; // Reset opacity
+
+                // Restore context
+                ctx.restore();
+
+                // Draw name if enabled or if it's a PC
+                if (playerView.showNames || combatant.type === "PC") {
+                  const displayName = combatant.displayName || combatant.name;
+                  ctx.font = "12px Arial";
+                  ctx.textAlign = "center";
+                  ctx.textBaseline = "top";
+                  ctx.fillStyle = "#000000";
+                  ctx.fillText(displayName, isoX + 1, isoY + tokenSize / 3 + 4);
+                  ctx.fillStyle = "#ffffff";
+                  ctx.fillText(displayName, isoX, isoY + tokenSize / 3 + 3);
+                }
+              }
+            );
+          }
+
+          // Draw Fog of War overlay in isometric (players see complete darkness)
+          if (battleMap.fogOfWar && battleMap.fogOfWar.enabled) {
+            for (let y = 0; y < layer.height; y++) {
+              for (let x = 0; x < layer.width; x++) {
+                if (!isCellVisible(x, y, visibleCells)) {
+                  const iso = gridToIsometric(x, y, cellSize);
+                  const isoX = iso.x + centerOffsetX;
+                  const isoY = iso.y + centerOffsetY;
+
+                  // Check if this cell is lit
+                  const lightIntensity = getLightIntensityAtCell(x, y, layer);
+                  const baseOpacity = 1.0; // Players see complete darkness by default
+                  const lightTransparency =
+                    battleMap.fogOfWar.lightTransparency || 0;
+                  // Reduce opacity based on light intensity and transparency setting
+                  const finalOpacity =
+                    baseOpacity * (1 - lightIntensity * lightTransparency);
+
+                  // Draw dark isometric diamond for fog
+                  ctx.beginPath();
+                  ctx.moveTo(isoX + tileWidth / 2, isoY);
+                  ctx.lineTo(isoX + tileWidth, isoY + tileHeight / 2);
+                  ctx.lineTo(isoX + tileWidth / 2, isoY + tileHeight);
+                  ctx.lineTo(isoX, isoY + tileHeight / 2);
+                  ctx.closePath();
+
+                  ctx.fillStyle = `rgba(0, 0, 0, ${finalOpacity})`;
+                  ctx.fill();
+                }
+              }
+            }
+          }
+
+          ctx.restore();
+        }
+      }
+
+      function toggleLegend() {
+        playerView.showLegend = !playerView.showLegend;
+        const btn = document.getElementById("toggleLegendBtn");
+        const legend = document.getElementById("terrainLegend");
+
+        if (playerView.showLegend) {
+          btn.classList.add("active");
+          legend.style.display = "block";
+        } else {
+          btn.classList.remove("active");
+          legend.style.display = "none";
+        }
+      }
+
+      // Measure tool event handlers
+      let measureCanvas = null;
+      let measureCtx = null;
+
+      function initMeasureCanvas() {
+        // Create overlay canvas for measurements
+        if (!measureCanvas) {
+          measureCanvas = document.createElement("canvas");
+          measureCanvas.style.position = "absolute";
+          measureCanvas.style.pointerEvents = "none";
+          canvas.parentElement.style.position = "relative";
+          canvas.parentElement.appendChild(measureCanvas);
+        }
+
+        const rect = canvas.getBoundingClientRect();
+        measureCanvas.width = canvas.width;
+        measureCanvas.height = canvas.height;
+        measureCanvas.style.width = canvas.style.width;
+        measureCanvas.style.height = canvas.style.height;
+        measureCanvas.style.left = canvas.offsetLeft + "px";
+        measureCanvas.style.top = canvas.offsetTop + "px";
+        measureCtx = measureCanvas.getContext("2d");
+      }
+
+      function drawMeasurementOverlay() {
+        if (
+          !measureCanvas ||
+          !playerView.measureStart ||
+          !playerView.measureEnd
+        )
+          return;
+
+        // Clear the overlay
+        measureCtx.clearRect(0, 0, measureCanvas.width, measureCanvas.height);
+
+        // Scale to match main canvas
+        measureCtx.save();
+        measureCtx.scale(playerView.zoom, playerView.zoom);
+
+        // Draw measurement line
+        measureCtx.strokeStyle = "#BA68C8";
+        measureCtx.lineWidth = 3;
+        measureCtx.setLineDash([10, 5]);
+        measureCtx.beginPath();
+        measureCtx.moveTo(playerView.measureStart.x, playerView.measureStart.y);
+        measureCtx.lineTo(playerView.measureEnd.x, playerView.measureEnd.y);
+        measureCtx.stroke();
+        measureCtx.setLineDash([]);
+
+        // Draw start and end points
+        measureCtx.fillStyle = "#BA68C8";
+        measureCtx.beginPath();
+        measureCtx.arc(
+          playerView.measureStart.x,
+          playerView.measureStart.y,
+          5,
+          0,
+          Math.PI * 2
+        );
+        measureCtx.fill();
+        measureCtx.beginPath();
+        measureCtx.arc(
+          playerView.measureEnd.x,
+          playerView.measureEnd.y,
+          5,
+          0,
+          Math.PI * 2
+        );
+        measureCtx.fill();
+
+        measureCtx.restore();
+      }
+
+      function clearMeasurementOverlay() {
+        if (measureCanvas && measureCtx) {
+          measureCtx.clearRect(0, 0, measureCanvas.width, measureCanvas.height);
+        }
+      }
+
+      // Measure tool event handlers
+      canvas.addEventListener("mousedown", (e) => {
+        if (!playerView.measureActive) return;
+
+        if (!measureCanvas) initMeasureCanvas();
+
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / playerView.zoom;
+        const y = (e.clientY - rect.top) / playerView.zoom;
+
+        playerView.measureStart = { x, y };
+        playerView.measureEnd = { x, y };
+        drawMeasurementOverlay();
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (!playerView.measureActive || !playerView.measureStart) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / playerView.zoom;
+        const y = (e.clientY - rect.top) / playerView.zoom;
+
+        playerView.measureEnd = { x, y };
+        drawMeasurementOverlay();
+        updateMeasureDisplay();
+      });
+
+      canvas.addEventListener("mouseup", (e) => {
+        if (!playerView.measureActive) return;
+
+        // Keep the measurement displayed
+        updateMeasureDisplay();
+      });
+
+      function updateMeasureDisplay() {
+        if (!playerView.measureStart || !playerView.measureEnd) return;
+
+        const cellSize = 40;
+        const dx = playerView.measureEnd.x - playerView.measureStart.x;
+        const dy = playerView.measureEnd.y - playerView.measureStart.y;
+        const distancePixels = Math.sqrt(dx * dx + dy * dy);
+        const distanceMetres = (distancePixels / cellSize).toFixed(1);
+        const distanceSquares = Math.round(distancePixels / cellSize);
+
+        const display = document.getElementById("measureDisplay");
+        display.innerHTML = `
+          <div style="margin-bottom: 5px;">📏 Distance</div>
+          <div style="font-size: 1.3em;">${distanceMetres}m (${distanceSquares} squares)</div>
+        `;
+        display.style.display = "block";
+      }
+
+      // Initialize on load
+      window.addEventListener("DOMContentLoaded", initPlayerView);
+    </script>
+  </body>
+</html>

@@ -88,13 +88,20 @@ function updateRollLogDisplay() {
     return;
   }
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   logContainer.innerHTML = rollHistory
     .map(
       (roll) => `
-    <div style="padding: 8px; border-bottom: 1px solid rgba(76, 175, 80, 0.2); display: flex; justify-content: space-between;">
+    <div style="padding: 8px; border-bottom: 1px solid ${primaryRgba(
+      0.2
+    )}; display: flex; justify-content: space-between;">
       <span style="color: #888;">${roll.timestamp}</span>
       <span>${roll.description}</span>
-      <span style="color: #4CAF50; font-weight: bold;">${roll.result}</span>
+      <span style="color: ${primaryColor}; font-weight: bold;">${
+        roll.result
+      }</span>
     </div>
   `
     )
@@ -332,7 +339,7 @@ function updateSessionHistoryDisplay() {
         <div style="display: flex; gap: 8px; margin-top: 8px;">
           <button class="button" onclick="event.stopPropagation(); loadSession(${
             session.number
-          })" style="padding: 5px 12px; font-size: 0.9em; background: #4CAF50; color: white; border: none;">
+          })" style="padding: 5px 12px; font-size: 0.9em; background: ${primaryColor}; color: white; border: none;">
             Load
           </button>
           <button class="button" onclick="event.stopPropagation(); editSessionFromHistory(${

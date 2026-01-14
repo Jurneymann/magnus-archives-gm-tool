@@ -36,11 +36,44 @@
     />
   </head>
   <body>
-    <img
-      src="assets/MagnusHeader.png"
-      alt="https://images.steamusercontent.com/ugc/1658972820362899540/C807B188BF468B57BC6ED24CECDDBE50610019ED/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
-      class="header-image"
-    />
+    <!-- Header Container - shows either normal header image or Horror Mode banner -->
+    <div class="header-container">
+      <img
+        src="assets/MagnusHeader.png"
+        alt="https://images.steamusercontent.com/ugc/1658972820362899540/C807B188BF468B57BC6ED24CECDDBE50610019ED/?imw=637&imh=358&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
+        class="header-image"
+        id="headerImage"
+      />
+
+      <!-- Horror Mode Banner - replaces header image when active -->
+      <div id="horrorModeBanner" class="horror-mode-banner">
+        <div class="horror-mode-content">
+          <h1 class="horror-title-main">THE MAGNUS ARCHIVES</h1>
+          <h2 class="horror-title-sub">HORROR MODE</h2>
+          <div class="horror-mode-controls">
+            <button
+              class="horror-level-btn"
+              onclick="decrementHorrorLevel()"
+              title="Decrease Horror Level"
+            >
+              −
+            </button>
+            <div class="horror-level-display">
+              <span class="horror-level-label">INTRUSION RATE</span>
+              <span id="horrorLevelDisplay" class="horror-level-number">1</span>
+            </div>
+            <button
+              class="horror-level-btn"
+              onclick="incrementHorrorLevel()"
+              title="Increase Horror Level"
+            >
+              +
+            </button>
+          </div>
+          <h2 class="horror-title-desc">Vigilo. Opperior. Audio.</h2>
+        </div>
+      </div>
+    </div>
 
     <div class="sheet">
       <h1 id="pageTitle">Game Master Toolset</h1>
@@ -65,6 +98,7 @@
             font-weight: 600;
             letter-spacing: 2px;
             font-size: 1.2em;
+            transition: all 1.2s ease;
           "
         />
       </div>
@@ -85,6 +119,119 @@
           <button class="tab-button" data-tab="bestiary">Bestiary</button>
           <button class="tab-button" data-tab="locations">Locations</button>
           <button class="tab-button" data-tab="npcs">NPCs</button>
+        </div>
+
+        <!-- Horror Mode Toggle & Time Tracker Container -->
+        <div class="horror-mode-toggle-container">
+          <button
+            id="horrorModeToggle"
+            class="horror-mode-toggle-btn"
+            onclick="toggleHorrorMode()"
+            title="Toggle Horror Mode - Extreme negative effects on low dice rolls"
+          >
+            <span class="toggle-icon">☠</span>
+            <span class="toggle-text">Horror Mode</span>
+          </button>
+
+          <!-- In-Game Time Tracker -->
+          <div class="time-tracker-container">
+            <div class="time-tracker-display" onclick="toggleTimeTracker()">
+              <span class="time-icon">🕐</span>
+              <div class="time-text">
+                <div class="time-date" id="gameDate">
+                  Day 1, Month 1, Year 1996
+                </div>
+                <div class="time-clock" id="gameTime">12:00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time Tracker Controls Modal -->
+        <div
+          id="timeTrackerModal"
+          class="time-tracker-modal"
+          style="display: none"
+        >
+          <div class="time-tracker-panel">
+            <div class="time-tracker-header">
+              <h3>⏰ In-Game Time Tracker</h3>
+              <button onclick="toggleTimeTracker()" class="close-btn">✖</button>
+            </div>
+            <div class="time-tracker-body">
+              <div class="time-input-group">
+                <label>Year</label>
+                <input
+                  type="number"
+                  id="timeYear"
+                  min="1"
+                  value="1996"
+                  onchange="updateGameTime()"
+                />
+              </div>
+              <div class="time-input-group">
+                <label>Month</label>
+                <input
+                  type="number"
+                  id="timeMonth"
+                  min="1"
+                  max="12"
+                  value="1"
+                  onchange="updateGameTime()"
+                />
+              </div>
+              <div class="time-input-group">
+                <label>Day</label>
+                <input
+                  type="number"
+                  id="timeDay"
+                  min="1"
+                  max="31"
+                  value="1"
+                  onchange="updateGameTime()"
+                />
+              </div>
+              <div class="time-input-group">
+                <label>Hour</label>
+                <input
+                  type="number"
+                  id="timeHour"
+                  min="0"
+                  max="23"
+                  value="12"
+                  onchange="updateGameTime()"
+                />
+              </div>
+              <div class="time-input-group">
+                <label>Minute</label>
+                <input
+                  type="number"
+                  id="timeMinute"
+                  min="0"
+                  max="59"
+                  value="0"
+                  onchange="updateGameTime()"
+                />
+              </div>
+            </div>
+            <div class="time-tracker-controls">
+              <button class="time-btn" onclick="advanceTime(10)">
+                +10 min
+              </button>
+              <button class="time-btn" onclick="advanceTime(30)">
+                +30 min
+              </button>
+              <button class="time-btn" onclick="advanceTime(60)">
+                +1 hour
+              </button>
+              <button class="time-btn" onclick="advanceTime(600)">
+                +10 hours
+              </button>
+              <button class="time-btn" onclick="advanceTime(1440)">
+                +1 day
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Players Tab -->
@@ -395,6 +542,7 @@
               <!-- Initiative Tracker -->
               <div id="initiativeTracker">
                 <h3>Combat Tracker</h3>
+
                 <div
                   id="initiativeList"
                   style="
@@ -410,6 +558,47 @@
                   >
                     No combatants. Add party members and NPCs to begin.
                   </p>
+                </div>
+              </div>
+
+              <!-- Battle Map -->
+              <div id="battleMapSection" style="margin-top: 30px">
+                <h3
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    cursor: pointer;
+                    user-select: none;
+                  "
+                  onclick="toggleBattleMap()"
+                >
+                  <span id="battleMapToggleIcon" style="font-size: 0.8em"
+                    >▶</span
+                  >
+                  Battle Map
+                  <span
+                    style="font-size: 0.7em; color: #888; font-weight: normal"
+                    >(Visual Position Tracker)</span
+                  >
+                </h3>
+                <div id="battleMapContent" style="display: none">
+                  <p
+                    style="
+                      color: #888;
+                      margin: 0 0 15px 0;
+                      line-height: 1.6;
+                      font-size: 0.95em;
+                    "
+                  >
+                    <strong>Track combatant positions visually.</strong><br />
+                    Configure map size, add terrain and obstacles, then move
+                    combatants around the grid. Each square represents 1 metre.
+                    Click a combatant to select it, then click a square to move
+                    them there.
+                  </p>
+                  <div id="battleMapControls"></div>
+                  <div id="battleMapCanvas"></div>
                 </div>
               </div>
             </div>
@@ -3801,16 +3990,18 @@
     <!-- ==================== GM TOOL FUNCTION FILES ==================== -->
     <script src="functions/dashboard.js?v=2"></script>
     <script src="functions/party.js?v=2"></script>
-    <script src="functions/combat.js?v=2"></script>
+    <script src="functions/combat.js?v=4"></script>
+    <script src="functions/battle-map.js?v=45"></script>
     <script src="functions/npcs.js?v=5"></script>
     <script src="functions/reference.js?v=3"></script>
-    <script src="functions/bestiary.js?v=1"></script>
+    <script src="functions/bestiary.js?v=3"></script>
     <script src="functions/artefacts.js?v=1"></script>
     <script src="functions/leitners.js?v=1"></script>
     <script src="functions/locations.js"></script>
     <script src="functions/tools.js?v=2"></script>
     <script src="functions/toolbar.js?v=2"></script>
     <script src="functions/save-load.js"></script>
+    <script src="functions/time-tracker.js"></script>
 
     <!-- ==================== LEGACY CHARACTER SHEET FILES (May be removed later) ==================== -->
     <!-- <script src="functions/equipment.js"></script>
@@ -3829,7 +4020,7 @@
     <script src="functions/character.js"></script> -->
 
     <!-- ==================== GLOBAL SCOPE ASSIGNMENTS ==================== -->
-    <script src="functions/global.js"></script>
+    <script src="functions/global.js?v=2"></script>
 
     <!-- ==================== TAB SYSTEM ==================== -->
     <script src="functions/tab-system.js"></script>
@@ -3859,6 +4050,22 @@
           icon.textContent = "▼";
         } else {
           section.style.display = "none";
+          icon.textContent = "▶";
+        }
+      }
+
+      function toggleBattleMap() {
+        const content = document.getElementById("battleMapContent");
+        const icon = document.getElementById("battleMapToggleIcon");
+        if (content.style.display === "none") {
+          content.style.display = "block";
+          icon.textContent = "▼";
+          // Initialize battle map when first opened
+          if (typeof initializeBattleMap === "function") {
+            initializeBattleMap();
+          }
+        } else {
+          content.style.display = "none";
           icon.textContent = "▶";
         }
       }

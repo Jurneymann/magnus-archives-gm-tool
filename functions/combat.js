@@ -6,6 +6,80 @@ let combatActive = false;
 let combatPhase = "setup"; // 'setup', 'initiative', 'active'
 let expandedCombatants = {}; // Track which combatants are expanded
 
+// Horror Mode State
+let horrorMode = {
+  enabled: false,
+  level: 1, // Default horror level
+};
+
+// Horror Mode Functions
+function toggleHorrorMode() {
+  horrorMode.enabled = !horrorMode.enabled;
+
+  // Reset level to 1 when disabling
+  if (!horrorMode.enabled) {
+    horrorMode.level = 1;
+  }
+
+  // Toggle body class for theme switching
+  if (horrorMode.enabled) {
+    document.body.classList.add("horror-mode-active");
+  } else {
+    document.body.classList.remove("horror-mode-active");
+  }
+
+  updateHorrorModeUI();
+  saveHorrorModeState();
+}
+
+function incrementHorrorLevel() {
+  if (horrorMode.level < 10) {
+    horrorMode.level++;
+    updateHorrorModeUI();
+    saveHorrorModeState();
+  }
+}
+
+function decrementHorrorLevel() {
+  if (horrorMode.level > 1) {
+    horrorMode.level--;
+    updateHorrorModeUI();
+    saveHorrorModeState();
+  }
+}
+
+function updateHorrorModeUI() {
+  const banner = document.getElementById("horrorModeBanner");
+  const headerImage = document.getElementById("headerImage");
+  const toggle = document.getElementById("horrorModeToggle");
+  const levelDisplay = document.getElementById("horrorLevelDisplay");
+
+  if (horrorMode.enabled) {
+    banner.classList.add("visible");
+    if (headerImage) headerImage.classList.add("hidden");
+    document.body.classList.add("horror-mode-active");
+    if (toggle) toggle.classList.add("active");
+    if (levelDisplay) levelDisplay.textContent = horrorMode.level;
+  } else {
+    banner.classList.remove("visible");
+    if (headerImage) headerImage.classList.remove("hidden");
+    document.body.classList.remove("horror-mode-active");
+    if (toggle) toggle.classList.remove("active");
+  }
+}
+
+function saveHorrorModeState() {
+  localStorage.setItem("horrorMode", JSON.stringify(horrorMode));
+}
+
+function loadHorrorModeState() {
+  const saved = localStorage.getItem("horrorMode");
+  if (saved) {
+    horrorMode = JSON.parse(saved);
+    updateHorrorModeUI();
+  }
+}
+
 // ==================== SETUP PHASE ==================== //
 
 function addPartyMemberToCombat(memberId) {
@@ -35,6 +109,10 @@ function addPartyMemberToCombat(memberId) {
     effort: member.effort || 1,
     location: "",
     notes: "",
+    sourceToken:
+      typeof sourceTokenPresets !== "undefined"
+        ? sourceTokenPresets.party[memberId]
+        : undefined,
   };
 
   // If combat is active, prompt for initiative and insert in order
@@ -80,6 +158,10 @@ function addAllPartyToCombat() {
         effort: member.effort || 1,
         location: "",
         notes: "",
+        sourceToken:
+          typeof sourceTokenPresets !== "undefined"
+            ? sourceTokenPresets.party[member.id]
+            : undefined,
       });
       added++;
     }
@@ -113,6 +195,10 @@ function addNPCToCombatTracker(npcId) {
     abilities: npc.abilities || "",
     location: "",
     notes: "",
+    sourceToken:
+      typeof sourceTokenPresets !== "undefined"
+        ? sourceTokenPresets.npcs[npcId]
+        : undefined,
   };
 
   // If combat is active, prompt for initiative and insert in order
@@ -186,10 +272,14 @@ function addBestiaryToCombat(creatureName, customCreature = null) {
 
   for (let i = 0; i < quantity; i++) {
     const suffix = quantity > 1 ? ` ${i + 1}` : "";
+    const displayName = creature.name + suffix;
+
     const newCombatant = {
       id: Date.now() + i,
       type: "Creature",
       name: creature.name + suffix,
+      displayName: displayName, // Can be edited in Combat Tracker
+      creatureType: creature.name, // Original creature type for reference
       initiative: initiativeValue,
       level: creature.level || 1,
       health: creature.health || creature.level * 3,
@@ -201,6 +291,10 @@ function addBestiaryToCombat(creatureName, customCreature = null) {
       location: "",
       notes: "",
       custom: creature.custom || false,
+      sourceToken:
+        typeof sourceTokenPresets !== "undefined"
+          ? sourceTokenPresets.bestiary[creature.name]
+          : undefined,
     };
 
     if (inActiveCombat) {
@@ -441,6 +535,11 @@ function endCombat() {
   combatActive = false;
   combatPhase = "setup";
 
+  // Clear battle map
+  if (typeof clearBattleMap === "function") {
+    clearBattleMap();
+  }
+
   if (typeof addToRollLog === "function") {
     addToRollLog("Combat", "Ended");
   }
@@ -477,6 +576,11 @@ function updateCombatantField(id, field, value) {
   }
 
   renderCombatTracker();
+
+  // Update battle map state if the function exists
+  if (typeof saveBattleMapState === "function") {
+    saveBattleMapState();
+  }
 }
 
 function toggleCombatantExpanded(id) {
@@ -507,6 +611,11 @@ function renderCombatTracker() {
   } else {
     renderActivePhase(container);
   }
+
+  // Sync battle map with current combatants
+  if (typeof syncBattleMapWithCombat === "function") {
+    syncBattleMapWithCombat();
+  }
 }
 
 function renderSetupPhase(container) {
@@ -520,9 +629,14 @@ function renderSetupPhase(container) {
 }
 
 function renderInitiativePhase(container) {
+  const primaryColor = window.getThemeColor("primary");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   container.innerHTML = `
-    <div style="margin-bottom: 20px; padding: 15px; background: rgba(76, 175, 80, 0.1); border-left: 3px solid #4CAF50; border-radius: 4px;">
-      <strong style="color: #4CAF50;">Initiative Phase</strong>
+    <div style="margin-bottom: 20px; padding: 15px; background: ${primaryRgba(
+      0.1
+    )}; border-left: 3px solid ${primaryColor}; border-radius: 4px;">
+      <strong style="color: ${primaryColor};">Initiative Phase</strong>
       <p style="color: #ccc; margin-top: 5px; font-size: 0.9em;">Enter initiative rolls for all combatants, then confirm to start combat.</p>
     </div>
     ${combatants.map((c) => renderCombatantInitiative(c)).join("")}
@@ -536,11 +650,13 @@ function renderActivePhase(container) {
 }
 
 function renderCombatantSetup(combatant) {
+  const primaryColor = window.getThemeColor("primary");
+
   return `
-    <div style="padding: 12px; margin-bottom: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 6px; border: 1px solid #4CAF50;">
+    <div style="padding: 12px; margin-bottom: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 6px; border: 1px solid ${primaryColor};">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <span style="font-weight: bold; color: #4CAF50;">${combatant.name}</span>
+          <span style="font-weight: bold; color: ${primaryColor};">${combatant.name}</span>
           <span style="color: #888; margin-left: 10px; font-size: 0.9em;">${combatant.type}</span>
         </div>
         <button onclick="removeCombatant(${combatant.id})" style="background: #d32f2f; border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Remove</button>
@@ -550,12 +666,14 @@ function renderCombatantSetup(combatant) {
 }
 
 function renderCombatantInitiative(combatant) {
+  const primaryColor = window.getThemeColor("primary");
+
   return `
-    <div style="padding: 12px; margin-bottom: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 6px; border: 1px solid #4CAF50; display: flex; align-items: center; gap: 15px;">
+    <div style="padding: 12px; margin-bottom: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 6px; border: 1px solid ${primaryColor}; display: flex; align-items: center; gap: 15px;">
       <div style="flex: 1;">
-        <span style="font-weight: bold; color: #4CAF50;">${
-          combatant.name
-        }</span>
+        <span style="font-weight: bold; color: ${primaryColor};">${
+    combatant.name
+  }</span>
         <span style="color: #888; margin-left: 10px; font-size: 0.9em;">${
           combatant.type
         }</span>
@@ -568,7 +686,7 @@ function renderCombatantInitiative(combatant) {
           value="${combatant.initiative || ""}" 
           onchange="updateInitiative(${combatant.id}, this.value)"
           placeholder="1-20"
-          style="width: 80px; padding: 6px; background: rgba(0,0,0,0.5); border: 1px solid #4CAF50; border-radius: 4px; color: #e0e0e0; text-align: center;"
+          style="width: 80px; padding: 6px; background: rgba(0,0,0,0.5); border: 1px solid ${primaryColor}; border-radius: 4px; color: #e0e0e0; text-align: center;"
         />
         ${
           combatant.type !== "PC"
@@ -590,9 +708,16 @@ function renderCombatantActive(combatant, index) {
   const isDefeated = isCombatantDefeated(combatant);
   const isExpanded = expandedCombatants[combatant.id];
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   const opacity = isDefeated ? "0.4" : "1";
-  const borderColor = isCurrent ? "#4CAF50" : isDefeated ? "#666" : "#4CAF50";
-  const bgColor = isCurrent ? "rgba(76, 175, 80, 0.2)" : "rgba(0, 0, 0, 0.3)";
+  const borderColor = isCurrent
+    ? primaryColor
+    : isDefeated
+    ? "#666"
+    : primaryColor;
+  const bgColor = isCurrent ? primaryRgba(0.2) : "rgba(0, 0, 0, 0.3)";
 
   if (combatant.type === "PC") {
     return renderPCCombatant(
@@ -821,6 +946,42 @@ function renderPCCombatant(
                 style="width: calc(100% - 16px); min-height: 60px; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #4CAF50; border-radius: 4px; color: #e0e0e0; resize: vertical;"
               >${combatant.notes || ""}</textarea>
             </div>
+            
+            <!-- Battle Map Facing Controls -->
+            <div style="grid-column: 1 / -1; margin-top: 10px; padding: 10px; background: rgba(156, 39, 176, 0.1); border: 1px solid #9C27B0; border-radius: 6px;">
+              <label style="display: block; margin-bottom: 8px; color: #BA68C8; font-size: 0.9em; font-weight: bold;">🔄 Battle Map Facing</label>
+              <div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center;">
+                <button class="button" onclick="rotateCombatant(45, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">↻ 45°</button>
+                <button class="button" onclick="rotateCombatant(-45, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">↺ -45°</button>
+                <button class="button" onclick="setCombatantFacing(0, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">⬆️ N</button>
+                <button class="button" onclick="setCombatantFacing(90, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">➡️ E</button>
+                <button class="button" onclick="setCombatantFacing(180, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">⬇️ S</button>
+                <button class="button" onclick="setCombatantFacing(270, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">⬅️ W</button>
+                <span id="facing-display-${
+                  combatant.id
+                }" style="margin-left: auto; color: #BA68C8; font-size: 0.85em;">
+                  ${
+                    typeof battleMap !== "undefined" &&
+                    battleMap.combatantFacing &&
+                    battleMap.combatantFacing[combatant.id] !== undefined
+                      ? battleMap.combatantFacing[combatant.id] + "°"
+                      : "0°"
+                  }
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       `
@@ -854,7 +1015,14 @@ function renderNPCCombatant(
             <div style="font-weight: bold; font-size: 1.1em; color: ${
               isCurrent ? "#4CAF50" : "#e0e0e0"
             };">
-              ${combatant.name}
+              ${combatant.displayName || combatant.name}
+              ${
+                combatant.displayName &&
+                combatant.displayName !== combatant.name &&
+                combatant.creatureType
+                  ? `<span style="color: #888; font-size: 0.85em; font-weight: normal;"> (${combatant.creatureType})</span>`
+                  : ""
+              }
               ${
                 isCurrent
                   ? '<span style="color: #4CAF50; margin-left: 10px;">◄ ACTIVE</span>'
@@ -884,15 +1052,23 @@ function renderNPCCombatant(
           ? `
         <div style="padding: 0 15px 15px 15px; border-top: 1px solid rgba(76, 175, 80, 0.3);">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-            <!-- Row 1: Name, Level -->
+            <!-- Row 1: Display Name, Level -->
             <div>
-              <label style="display: block; color: #888; margin-bottom: 5px; font-size: 0.9em;">Name</label>
+              <label style="display: block; color: #888; margin-bottom: 5px; font-size: 0.9em;">
+                Display Name
+                ${
+                  combatant.creatureType
+                    ? `<span style="font-size: 0.85em; color: #666;"> (${combatant.creatureType})</span>`
+                    : ""
+                }
+              </label>
               <input 
                 type="text" 
-                value="${combatant.name}" 
+                value="${combatant.displayName || combatant.name}" 
                 onchange="updateCombatantField(${
                   combatant.id
-                }, 'name', this.value)"
+                }, 'displayName', this.value)"
+                placeholder="${combatant.creatureType || combatant.name}"
                 style="width: calc(100% - 16px); padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #4CAF50; border-radius: 4px; color: #e0e0e0;"
               />
             </div>
@@ -1027,6 +1203,42 @@ function renderNPCCombatant(
                 }</textarea>
               `
               }
+            </div>
+            
+            <!-- Battle Map Facing Controls -->
+            <div style="grid-column: 1 / -1; margin-top: 10px; padding: 10px; background: rgba(156, 39, 176, 0.1); border: 1px solid #9C27B0; border-radius: 6px;">
+              <label style="display: block; margin-bottom: 8px; color: #BA68C8; font-size: 0.9em; font-weight: bold;">🔄 Battle Map Facing</label>
+              <div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center;">
+                <button class="button" onclick="rotateCombatant(45, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">↻ 45°</button>
+                <button class="button" onclick="rotateCombatant(-45, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">↺ -45°</button>
+                <button class="button" onclick="setCombatantFacing(0, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">⬆️ N</button>
+                <button class="button" onclick="setCombatantFacing(90, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">➡️ E</button>
+                <button class="button" onclick="setCombatantFacing(180, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">⬇️ S</button>
+                <button class="button" onclick="setCombatantFacing(270, ${
+                  combatant.id
+                })" style="flex: 0 0 auto; padding: 6px 10px; font-size: 0.9em;">⬅️ W</button>
+                <span id="facing-display-${
+                  combatant.id
+                }" style="margin-left: auto; color: #BA68C8; font-size: 0.85em;">
+                  ${
+                    typeof battleMap !== "undefined" &&
+                    battleMap.combatantFacing &&
+                    battleMap.combatantFacing[combatant.id] !== undefined
+                      ? battleMap.combatantFacing[combatant.id] + "°"
+                      : "0°"
+                  }
+                </span>
+              </div>
             </div>
           </div>
         </div>

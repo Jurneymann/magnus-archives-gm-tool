@@ -30,23 +30,33 @@ function populateDifficulties() {
   const container = document.getElementById("difficultiesReference");
   if (!container || typeof DIFFICULTIES === "undefined") return;
 
+  const primaryColor = window.getThemeColor("primary");
+  const primaryLight = window.getThemeColor("primaryLight");
+  const primaryRgba = window.getThemeColor("primaryRgba");
+
   container.innerHTML = `
     <table style="width: 100%; border-collapse: collapse;">
       <thead>
-        <tr style="background: rgba(76, 175, 80, 0.2);">
-          <th style="padding: 12px; text-align: center; border-bottom: 2px solid #4CAF50; width: 80px;">Difficulty</th>
-          <th style="padding: 12px; text-align: center; border-bottom: 2px solid #4CAF50; width: 80px;">Target #</th>
-          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #4CAF50; width: 120px;">Description</th>
-          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #4CAF50;">Guidance</th>
+        <tr style="background: ${primaryRgba(0.2)};">
+          <th style="padding: 12px; text-align: center; border-bottom: 2px solid ${primaryColor}; width: 80px;">Difficulty</th>
+          <th style="padding: 12px; text-align: center; border-bottom: 2px solid ${primaryColor}; width: 80px;">Target #</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 2px solid ${primaryColor}; width: 120px;">Description</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 2px solid ${primaryColor};">Guidance</th>
         </tr>
       </thead>
       <tbody>
         ${DIFFICULTIES.map(
           (diff) => `
-          <tr style="border-bottom: 1px solid rgba(76, 175, 80, 0.2);">
-            <td style="padding: 12px; text-align: center; font-weight: bold; color: #4CAF50;">${diff.difficulty}</td>
-            <td style="padding: 12px; text-align: center; font-weight: bold;">${diff.targetNumber}</td>
-            <td style="padding: 12px; font-weight: bold; color: #66bb6a;">${diff.description}</td>
+          <tr style="border-bottom: 1px solid ${primaryRgba(0.2)};">
+            <td style="padding: 12px; text-align: center; font-weight: bold; color: ${primaryColor};">${
+            diff.difficulty
+          }</td>
+            <td style="padding: 12px; text-align: center; font-weight: bold;">${
+              diff.targetNumber
+            }</td>
+            <td style="padding: 12px; font-weight: bold; color: ${primaryLight};">${
+            diff.description
+          }</td>
             <td style="padding: 12px; color: #ccc;">${diff.guidance}</td>
           </tr>
         `

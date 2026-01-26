@@ -49,6 +49,7 @@ function initializeDashboard() {
   }
 
   updatePartyStats();
+  loadSessionNotes();
 }
 
 // Update party stats display
@@ -95,7 +96,7 @@ function updateRollLogDisplay() {
     .map(
       (roll) => `
     <div style="padding: 8px; border-bottom: 1px solid ${primaryRgba(
-      0.2
+      0.2,
     )}; display: flex; justify-content: space-between;">
       <span style="color: #888;">${roll.timestamp}</span>
       <span>${roll.description}</span>
@@ -103,7 +104,7 @@ function updateRollLogDisplay() {
         roll.result
       }</span>
     </div>
-  `
+  `,
     )
     .join("");
 }
@@ -133,7 +134,7 @@ if (typeof window !== "undefined") {
 
 function saveSessionNotes() {
   let sessionNumber = parseInt(
-    document.getElementById("currentSessionNumber")?.value || 1
+    document.getElementById("currentSessionNumber")?.value || 1,
   );
   const sessionDate =
     document.getElementById("currentSessionDate")?.value || "";
@@ -163,7 +164,7 @@ function saveSessionNotes() {
     alert(
       `Session ${
         sessionNumber - 1
-      } already exists. Auto-incremented to Session ${sessionNumber}.`
+      } already exists. Auto-incremented to Session ${sessionNumber}.`,
     );
   }
 
@@ -191,13 +192,13 @@ function saveSessionNotes() {
 function loadSessionNotes() {
   const saved = localStorage.getItem("gmTool_sessionNotes");
   if (saved) {
-    sessionNotes = JSON.parse(saved);
+    const loadedSessions = JSON.parse(saved);
     // Convert all session numbers to integers to ensure consistency
-    sessionNotes = sessionNotes.map((session) => ({
+    sessionNotes = loadedSessions.map((session) => ({
       ...session,
       number: parseInt(session.number),
     }));
-    // Update window reference
+    // Update window reference to point to the same array
     if (typeof window !== "undefined") {
       window.sessionNotes = sessionNotes;
     }
@@ -222,7 +223,7 @@ function viewPastSessions() {
     .join("\n");
   const selected = prompt(
     `Enter session number to view:\n\n${sessionList}`,
-    sessionNotes[0].number
+    sessionNotes[0].number,
   );
 
   if (selected) {
@@ -243,6 +244,8 @@ function viewPastSessions() {
 function updateSessionHistoryDisplay() {
   const historyContainer = document.getElementById("sessionHistoryList");
   if (!historyContainer) return;
+
+  const primaryColor = window.getThemeColor("primary");
 
   if (sessionNotes.length === 0) {
     historyContainer.innerHTML =
@@ -277,11 +280,11 @@ function updateSessionHistoryDisplay() {
         return (a.date || "").localeCompare(b.date || "");
       case "title-asc":
         return (a.investigationName || "").localeCompare(
-          b.investigationName || ""
+          b.investigationName || "",
         );
       case "title-desc":
         return (b.investigationName || "").localeCompare(
-          a.investigationName || ""
+          a.investigationName || "",
         );
       case "giver-asc":
         return (a.statementGiver || "").localeCompare(b.statementGiver || "");
@@ -331,10 +334,10 @@ function updateSessionHistoryDisplay() {
             .slice(0, 10)
             .map((line) => `• ${line.trim()}`)
             .join("<br>")}${
-        session.notes.split("\n").filter((line) => line.trim()).length > 10
-          ? "<br>..."
-          : ""
-      }
+            session.notes.split("\n").filter((line) => line.trim()).length > 10
+              ? "<br>..."
+              : ""
+          }
         </div>
         <div style="display: flex; gap: 8px; margin-top: 8px;">
           <button class="button" onclick="event.stopPropagation(); loadSession(${
@@ -355,7 +358,7 @@ function updateSessionHistoryDisplay() {
         </div>
       </div>
     </div>
-  `
+  `,
     )
     .join("");
 }
@@ -413,7 +416,7 @@ function editSessionFromHistory(sessionNumber) {
     "Edit session:",
     sessionNumber,
     "Available sessions:",
-    notes.map((s) => s.number)
+    notes.map((s) => s.number),
   );
 
   const session = notes.find((s) => s.number === sessionNumber);
@@ -432,7 +435,7 @@ function editSessionFromHistory(sessionNumber) {
   document.getElementById("currentSessionNotes").value = session.notes || "";
 
   alert(
-    `Session ${sessionNumber} loaded for editing. Make your changes and click "Save Current Session" to update.`
+    `Session ${sessionNumber} loaded for editing. Make your changes and click "Save Current Session" to update.`,
   );
 }
 
@@ -447,7 +450,7 @@ function deleteSessionFromHistory(sessionNumber) {
     "Delete session:",
     sessionNumber,
     "Available sessions:",
-    notes.map((s) => s.number)
+    notes.map((s) => s.number),
   );
 
   const session = notes.find((s) => s.number === sessionNumber);
@@ -461,7 +464,7 @@ function deleteSessionFromHistory(sessionNumber) {
       session.date || "No date"
     }\nInvestigation: ${
       session.investigationName || "N/A"
-    }\n\nThis action cannot be undone.`
+    }\n\nThis action cannot be undone.`,
   );
 
   if (confirmDelete) {

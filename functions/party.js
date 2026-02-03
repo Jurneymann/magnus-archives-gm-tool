@@ -556,21 +556,30 @@ function renderPartyList() {
           member.fullData?.characterArc
             ? `
         <details style="margin-bottom: 15px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid ${primaryColor};">
-          <summary style="padding: 12px; cursor: pointer; font-weight: bold; color: #4CAF50;">Character Arc</summary>
+          <summary style="padding: 12px; cursor: pointer; font-weight: bold; color: #4CAF50;">Character Arc${member.fullData.characterArc.activeArcs?.length > 1 ? 's' : ''}</summary>
           <div style="padding: 15px;">
             ${
-              member.fullData.characterArc.currentArc
+              // New format: activeArcs array
+              member.fullData.characterArc.activeArcs && member.fullData.characterArc.activeArcs.length > 0
+                ? member.fullData.characterArc.activeArcs.map((arc, index) => `
+                  <div style="${index > 0 ? 'margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(76, 175, 80, 0.3);' : ''}">
+                    <div><strong style="color: #4CAF50;">Arc:</strong> ${arc.arcName}</div>
+                    ${arc.arcNotes ? `<div style="color: #ccc; margin-top: 5px;">${arc.arcNotes}</div>` : ""}
+                  </div>
+                `).join('')
+                // Old format: currentArc field
+                : member.fullData.characterArc.currentArc
                 ? `
-              <div><strong style="color: #4CAF50;">Current Arc:</strong> ${
-                member.fullData.characterArc.arcName ||
-                member.fullData.characterArc.currentArc
-              }</div>
-              ${
-                member.fullData.characterArc.arcNotes
-                  ? `<div style="color: #ccc; margin-top: 5px;">${member.fullData.characterArc.arcNotes}</div>`
-                  : ""
-              }
-            `
+                  <div><strong style="color: #4CAF50;">Current Arc:</strong> ${
+                    member.fullData.characterArc.arcName ||
+                    member.fullData.characterArc.currentArc
+                  }</div>
+                  ${
+                    member.fullData.characterArc.arcNotes
+                      ? `<div style="color: #ccc; margin-top: 5px;">${member.fullData.characterArc.arcNotes}</div>`
+                      : ""
+                  }
+                `
                 : '<div style="color: #888;">No active character arc</div>'
             }
           </div>
